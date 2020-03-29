@@ -1,7 +1,8 @@
+//importing modules
 const mongoose = require('mongoose')
 const chalk = require("chalk");
 
-//Mongoose config
+//Mongoose config to connect to the db
 mongoose.connect(process.env.MONGODB_URL, {
     useNewUrlParser: true,
     useCreateIndex: true,
