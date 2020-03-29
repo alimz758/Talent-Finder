@@ -1,0 +1,30 @@
+{
+  "name": "talent-finder",
+  "version": "1.0.0",
+  "description": "Web/mobile app based to find talent based on videos",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alimz758/Talent-Finder.git"
+  },
+  "author": "Ali Mirabzadeh",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/alimz758/Talent-Finder/issues"
+  },
+  "homepage": "https://github.com/alimz758/Talent-Finder#readme",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "chalk": "^3.0.0",
+    "connect-mongo": "^3.2.0",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "express-session": "^1.17.0",
+    "mongoose": "^5.9.6",
+    "request": "^2.88.2",
+    "session": "^0.1.0"
+  }
+}
