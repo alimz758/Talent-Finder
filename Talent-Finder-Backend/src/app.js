@@ -5,7 +5,7 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const session = require("express-session");
 const MongoStore = require("connect-mongo")(session);
-const userRouter = require("./user/index");
+const userPerformerRouter = require("./userPerformer/index");
 //Express config
  const app = express();
 // app.use(
@@ -36,7 +36,7 @@ app.use(express.json());
 // const reviewRouter = require("./review/index");
 // const requestRouter = require("./request/index");
   
-app.use(userRouter);
+app.use(userPerformerRouter);
 // app.use(rideRouter);
 // app.use(notiRouter);
 // app.use(stripeRouter);

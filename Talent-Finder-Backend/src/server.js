@@ -5,13 +5,15 @@ const chalk = require("chalk");
 // const checkS3Connection = require("./db/awsS3_controller.js").checkS3Connection;
 const corsOriginContoller = require("./middleware/cors_origin_control.js");
 //const checkTransfer = require("./stripe/tool/check-transfer.js").checkTransfer;
-// require("dotenv").config({ override: true });
+require("dotenv").config({ override: true });
 
+//---- SET the env variable
+process.env.MODE= "STAGING"
 //Port config for local and production 
 const port = process.env.PORT || 8000;
 //console.log(process.env.PORT)
 console.log(
-  chalk.green("[INIT]: Service is in ") +
+  chalk.green("[INIT]:") + " Service is in " +
     chalk.yellow(process.env.MODE) +
     " MODE"
 );

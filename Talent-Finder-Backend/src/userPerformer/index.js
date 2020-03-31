@@ -6,9 +6,9 @@ const router = new express.Router();
 // const fs = require("fs");
 // const sha256 = require("sha256");
 // const jwt = require("jsonwebtoken");
-// const sgMail = require("@sendgrid/mail");
+const sgMail = require("@sendgrid/mail");
 
-//const db = require("./controller.js");
+const db = require("./controller.js");
 // const uploadFile = require("../db/awsS3_controller.js").uploadFile;
 // const deleteFile = require("../db/awsS3_controller.js").deleteFile;
 // const checkAuth = require("../middleware/jwt_authenticator.js");
@@ -20,10 +20,49 @@ const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
 const ACCEPTED_EMAIL = process.env.ACCEPTED_EMAIL;
 const STRIPE_CLIENT_ID = process.env.STRIPE_CLIENT_ID;
 
-//sgMail.setApiKey(SENDGRID_API_KEY);
+sgMail.setApiKey(SENDGRID_API_KEY);
+
+//================= SIGN UP ==============
+router.post("/api/users/signup", async(req,res)=>{
+    try{
+        console.log("User Signup body",req.body)
+        //validate the form
+        if( await db.isValidAccount(req.body.email, req.body.password)){
+            //call signup controller to signup the user after doing the validations
+            db.signup(req.body)
+            //Construct the verification email
+            //If in STAGING MODE:
+            if(process.env.MODE==="STAGING"){
+                console.log("Sending the verification email STAGING MODE")
+                var msg = {
+                        to: 'ali.mz758@gmail.com',
+                        from: 'thealimz758@ucla.edu',
+                        subject: 'Email Verification',
+                        text: 'Verify please',
+                        html: '<strong>Just for testing</strong>',
+                };
+            }
+            else{
+                console.log("In production mode sending the verification email")
+            }
+            sgMail.send(msg).then(()=>{
+                res.sendStatus(201)
+            }).catch((e)=>{
+                res.sendStatus(500)
+            })
+            console.log("sent")
+            //send the verfication email
+        }  
+    }
+    //Couldn't signup
+    catch(e){
+        //400: bad request 
+        res.status(400).send({ error: e });
+    }
+})
 
 //User Login
-router.post("/users/login", (req, res) => {
+router.post("/api/users/login", (req, res) => {
     console.log("user login")
     //create new user
 
@@ -35,7 +74,6 @@ router.post("/users/login", (req, res) => {
 //const user = await User.findbyIdAndUpdate(req.param.id, req.body, {new:true, runValidators: true})
 //if(noUSER) => ERROR WITH 404
 
-//dynamic get
 
 //FIND BY ID
 // app.get('/users/:id', (req,res)=>{

@@ -1,0 +1,5 @@
+                                                    API
+All API URLs start with "/api/"
+
+---------------------- USERS -------------------
+Signup: /api/users/signup - POST

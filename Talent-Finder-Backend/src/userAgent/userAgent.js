@@ -1,6 +1,6 @@
 import { Schema, model } from "mongoose";
 
-const userAgencySchema = Schema({
+const userAgentSchema = Schema({
     name: String,
     personalEmail: String,
     username: { type: String, index: true },
@@ -14,8 +14,5 @@ const userAgencySchema = Schema({
     followings: Array,
     followers: Array,
 })
-
-
-const UserAgency = model("UserAgency", userAgencySchema);
-
-export default { UserAgency };
+const UserAgent = model("UserAgent", userAgentSchema);
+export default { UserAgent };

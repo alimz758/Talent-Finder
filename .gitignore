@@ -1,4 +1,5 @@
 Talent-Finder-Backend/node_modules
+Talent-Finder-Backend/sendgrid.env
 talent-finder-backend/node_modules
 .DS_Store
 .vscode

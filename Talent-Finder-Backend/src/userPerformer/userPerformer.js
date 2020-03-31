@@ -1,15 +1,7 @@
-import { Schema, model } from "mongoose"
-import { isEmail } from "validator"
-const userActorSchema = Schema({
+const mongoose = require("mongoose");
+const userPerformerSchema = mongoose.Schema({
     name:{type: String, required:true},
-    email: {type: String, required:true,
-        //validate the email
-        validate(email){
-            if(!isEmail(email)){
-                throw new Error("Email is invalid")
-            }
-        }
-    },
+    email: {type: String, required:true},
     age:  { type: Number, default: 0, required:true,
         validate(value){
             if(value<18){
@@ -34,5 +26,5 @@ const userActorSchema = Schema({
     followings: Array,
     followers: Array,
 })
-const UserActor = model("UserActor", userActorSchema);
-export default { UserActor };
+const UserPerformer = mongoose.model("UserPerformer", userPerformerSchema);
+module.exports= UserPerformer;
