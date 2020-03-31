@@ -1,13 +1,13 @@
-//require("../src/db/mongoose");
+require("../src/db/mongoose");
 const app = require("./app");
 const path = require("path");
 const chalk = require("chalk");
 // const checkS3Connection = require("./db/awsS3_controller.js").checkS3Connection;
-// const corsOriginContoller = require("./middleware/cors_origin_control.js");
-// const checkTransfer = require("./stripe/tool/check-transfer.js").checkTransfer;
+const corsOriginContoller = require("./middleware/cors_origin_control.js");
+//const checkTransfer = require("./stripe/tool/check-transfer.js").checkTransfer;
 // require("dotenv").config({ override: true });
 
-//Port config
+//Port config for local and production 
 const port = process.env.PORT || 8000;
 //console.log(process.env.PORT)
 console.log(
@@ -35,12 +35,8 @@ app.get("/*", (req, res) => {
     //req.query: the url that user asks for
   res.send("Hello")
 });
-//404 handler
-app.get("/*", (req, res) => {
-    res.send("404, Page NOT found!")
-  });
-//checkS3Connection();
 
+//checkS3Connection();
 app.listen(port, () => {
   console.log(
     chalk.green("[INIT]: ") + "Server Listening on Port " + chalk.yellow(port)

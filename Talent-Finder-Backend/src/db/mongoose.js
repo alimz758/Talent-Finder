@@ -3,7 +3,8 @@ const mongoose = require('mongoose')
 const chalk = require("chalk");
 
 //Mongoose config to connect to the db
-mongoose.connect(process.env.MONGODB_URL, {
+//mongodb url: mongodb://127.0.0.1:27017/act-finder-api
+mongoose.connect("mongodb://127.0.0.1:27017/act-finder-api", {
     useNewUrlParser: true,
     useCreateIndex: true,
     useFindAndModify: false,

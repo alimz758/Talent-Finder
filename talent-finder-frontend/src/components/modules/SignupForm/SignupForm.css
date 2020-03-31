@@ -1,0 +1,58 @@
+@import url("https://fonts.googleapis.com/css?family=Source+Sans+Pro");
+
+.signup-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100%;
+  overflow-y: auto;
+  align-items: center;
+  justify-content: center;
+}
+
+.signup-form {
+  display: flex;
+  flex-flow: column;
+  height: 482px;
+  width: 320px;
+  font-family: "Source Sans Pro", sans-serif;
+  margin-top: -50px;
+  margin-left: -20%;
+}
+
+.blue-text {
+  color: #3d77ff;
+}
+
+.terms-and-conditions {
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.header img {
+  width: 50px;
+  height: 60px;
+}
+
+.header h3 {
+  color: #535459;
+  letter-spacing: 1.5px;
+  font-weight: bold;
+}
+
+.header p {
+  line-height: 20px;
+  font-size: 14px;
+}
+
+.form-buttons {
+  margin-top: 30px;
+  display: flex;
+  flex-direction: row;
+}
+
+@media screen and (max-width: 1000px) {
+  .signup-form {
+    margin-left: 0;
+  }
+}

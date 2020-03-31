@@ -5,10 +5,19 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const session = require("express-session");
 const MongoStore = require("connect-mongo")(session);
-
+const userRouter = require("./user/index");
 //Express config
-const app = express();
-
+ const app = express();
+// app.use(
+//     cors({
+//         origin: [process.env.FRONT_END_URL],
+//         methods: ["GET", "POST"],
+//         credentials: true
+//     })
+// );
+  
+app.use(express.json());
+//app.use(bodyParser.urlencoded({ extended: true }));
 //app.get() get url
 // for the root 
 // app.get('', (req,res)=>{
@@ -20,7 +29,7 @@ const app = express();
 //     console.log("Server is listening...")
 // ) 
 
-const userRouter = require("./user/index");
+
 // const rideRouter = require("./ride/index");
 // const notiRouter = require("./noti/index");
 // const stripeRouter = require("./stripe/index");

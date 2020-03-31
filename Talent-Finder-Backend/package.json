@@ -1,10 +1,11 @@
 {
   "name": "talent-finder",
   "version": "1.0.0",
-  "description": "Web/mobile app based to find talent based on videos",
+  "description": "Web/mobile app based to find talents based on videos",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js"
   },
   "repository": {
     "type": "git",
@@ -21,9 +22,11 @@
     "chalk": "^3.0.0",
     "connect-mongo": "^3.2.0",
     "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "express-session": "^1.17.0",
     "mongoose": "^5.9.6",
+    "nodemon": "^2.0.2",
     "request": "^2.88.2",
     "session": "^0.1.0"
   }

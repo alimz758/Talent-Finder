@@ -1,6 +1,6 @@
-const mongoose = require("mongoose");
+import { Schema, model } from "mongoose";
 
-const userAgencySchema = mongoose.Schema({
+const userAgencySchema = Schema({
     name: String,
     personalEmail: String,
     username: { type: String, index: true },
@@ -10,11 +10,12 @@ const userAgencySchema = mongoose.Schema({
     createdAt: { type: Date, default: new Date() },
     agencyName: String,
     location: String,
-    businessEmail: String
-
+    businessEmail: String,
+    followings: Array,
+    followers: Array,
 })
 
 
-const UserAgency = mongoose.model("UserAgency", userAgencySchema);
+const UserAgency = model("UserAgency", userAgencySchema);
 
-module.exports = { UserAgency };
+export default { UserAgency };
