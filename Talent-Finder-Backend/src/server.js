@@ -7,8 +7,6 @@ const corsOriginContoller = require("./middleware/cors_origin_control.js");
 //const checkTransfer = require("./stripe/tool/check-transfer.js").checkTransfer;
 require("dotenv").config({ override: true });
 
-//---- SET the env variable
-process.env.MODE= "STAGING"
 //Port config for local and production 
 const port = process.env.PORT || 8000;
 //console.log(process.env.PORT)

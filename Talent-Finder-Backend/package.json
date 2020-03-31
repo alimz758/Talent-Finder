@@ -4,8 +4,8 @@
   "description": "Web/mobile app based to find talents based on videos",
   "main": "app.js",
   "scripts": {
-    "start": "node src/server.js",
-    "dev": "nodemon src/server.js"
+    "start": "env-cmd -f ./config/dev.env node src/server.js",
+    "dev": "env-cmd -f ./config/dev.env nodemon src/server.js"
   },
   "repository": {
     "type": "git",
@@ -24,6 +24,7 @@
     "connect-mongo": "^3.2.0",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
+    "env-cmd": "^10.1.0",
     "express": "^4.17.1",
     "express-session": "^1.17.0",
     "isemail": "^3.2.0",
