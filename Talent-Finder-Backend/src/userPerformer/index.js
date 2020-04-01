@@ -25,7 +25,6 @@ sgMail.setApiKey(SENDGRID_API_KEY);
 //================= SIGN UP ==============
 router.post("/api/users/signup", async(req,res)=>{
     try{
-        console.log("User Signup body",req.body)
         //validate the form
         if( await db.isValidAccount(req.body.email, req.body.password)){
             //call signup controller to signup the user after doing the validations
@@ -33,34 +32,30 @@ router.post("/api/users/signup", async(req,res)=>{
             //Construct the verification email
             //If in STAGING MODE:
             if(process.env.MODE==="STAGING"){
-                console.log("Sending the verification email STAGING MODE")
                 var msg = {
-                        to: 'ali.mz758@gmail.com',
+                        to: req.body.email.trim(),
                         from: 'thealimz758@ucla.edu',
                         subject: 'Email Verification',
-                        text: 'Verify please',
+                        text: 'Verify Please',
                         html: '<strong>Just for testing</strong>',
                 };
             }
             else{
                 console.log("In production mode sending the verification email")
             }
+            //send the verfication email
             sgMail.send(msg).then(()=>{
                 res.sendStatus(201)
             }).catch((e)=>{
-                res.sendStatus(500)
+                res.status(500).send({ error: e });
             })
-            console.log("sent")
-            //send the verfication email
         }  
     }
     //Couldn't signup
     catch(e){
-        //400: bad request 
-        res.status(400).send({ error: e });
+        res.status(409).send({ error: e });
     }
 })
-
 //User Login
 router.post("/api/users/login", (req, res) => {
     console.log("user login")
