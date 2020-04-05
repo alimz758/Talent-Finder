@@ -5,7 +5,7 @@ const router = new express.Router();
 // const fileType = require("file-type");
 // const fs = require("fs");
 // const sha256 = require("sha256");
-// const jwt = require("jsonwebtoken");
+const jwt = require("jsonwebtoken");
 const sgMail = require("@sendgrid/mail");
 
 const db = require("./controller.js");
@@ -25,6 +25,7 @@ sgMail.setApiKey(SENDGRID_API_KEY);
 //================= SIGN UP ==============
 router.post("/api/users/signup", async(req,res)=>{
     try{
+        //const token = jwt.sign({ email }, JWT_EMAIL_KEY, { expiresIn: "24h" });
         //validate the form
         if( await db.isValidAccount(req.body.email, req.body.password)){
             //call signup controller to signup the user after doing the validations
@@ -32,15 +33,18 @@ router.post("/api/users/signup", async(req,res)=>{
             //Construct the verification email
             //If in STAGING MODE:
             if(process.env.MODE==="STAGING"){
+                //verification url
+                //var verificationURL ="localhost:" + process.env.PORT + "/users/verify?token=" + token;
                 var msg = {
                         to: req.body.email.trim(),
                         from: 'thealimz758@ucla.edu',
                         subject: 'Email Verification',
                         text: 'Verify Please',
-                        html: '<strong>Just for testing</strong>',
+                        html: '<strong>Verify your account</strong>' ,
                 };
             }
             else{
+                //
                 console.log("In production mode sending the verification email")
             }
             //send the verfication email
