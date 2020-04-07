@@ -31,7 +31,10 @@ router.post("/users/signup", async(req,res)=>{
         //validate the form
         if( await db.isValidAccount(req.body.email, req.body.password)){
             //call signup controller to signup the user after doing the validations
-            db.signup(req.body)
+            await db.signup(req.body)
+            //get a token for verification email
+            const token = await newUserPerformer.generateAuthToken()
+            //const token = await newUserPerformer.generateAuthToken()
             //Construct the verification email
             //If in STAGING MODE:
             if(process.env.MODE==="STAGING"){
@@ -65,7 +68,6 @@ router.post("/users/signup", async(req,res)=>{
 })
 //User Login - public
 router.post("/users/login", async(req, res) => {
-    console.log(req.body)
     if(req.body.password){
         //hash the password
         req.body.password= sha256(req.body.password)
@@ -83,6 +85,33 @@ router.post("/users/login", async(req, res) => {
             });
         }
      })
+});
+//user logout
+router.post("/users/logout",checkAuth, async (req,res)=>{
+    try{
+        //modify the tokens array to remove token being used
+        req.user.tokens =req.user.tokens.filter((token)=>{
+            //filter tokens, keep the ones that are not the same as req.token
+            return token.token !== req.token
+        })
+        await req.user.save()
+        res.send("User Logged out.")
+    }
+    catch(e){
+        res.status(500).send()
+    }
+});
+
+router.post("/users/logoutAll",checkAuth, async (req,res)=>{
+    try{
+        //set the token array to empty
+        req.user.tokens = []
+        await req.user.save()
+        res.send("User Logged out.")
+    }
+    catch(e){
+        res.status(500).send()
+    }
 });
 //UPDATE USER
 //for patch an exisiting user in tryblock make sure to apply the validation as follows:

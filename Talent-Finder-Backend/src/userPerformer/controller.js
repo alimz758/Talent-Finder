@@ -14,7 +14,7 @@ const signup = async (userInfo) =>{
         try{
             //create a new user in DB
             const newUserPerformer = await UserPerformer.create(userInfo)
-            const token = await newUserPerformer.generateAuthToken()
+            
             resolve(newUserPerformer)
         }
         catch (e){
