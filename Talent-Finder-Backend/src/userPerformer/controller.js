@@ -6,7 +6,6 @@ const sha256 = require("sha256");
 
 // Signup controller
 const signup = async (userInfo) =>{
-    console.log("In signup controller", userInfo)
     return new Promise (async (resolve, reject) =>{
         //hash the password
         userInfo.password = sha256(userInfo.password)
@@ -14,8 +13,8 @@ const signup = async (userInfo) =>{
         var email = userInfo.email
         try{
             //create a new user in DB
-
             const newUserPerformer = await UserPerformer.create(userInfo)
+            const token = await newUserPerformer.generateAuthToken()
             resolve(newUserPerformer)
         }
         catch (e){
@@ -39,10 +38,32 @@ const isValidAccount = (email, password)=>{
         }
     })
 }
-
-
+//login 
+const login = (email, password, callback)=>{
+    UserPerformer.findOne(
+        {
+            email: email,
+            password: password
+        },
+        (err, result) => {
+            if (err) {
+              callback(err, null);
+            } 
+            else if (result === null) {
+              callback({ error: "User with email and password not found" }, null);
+            } 
+            // else if (result.verified === false) {
+            //   callback({ message: "Email not verified" }, null);
+            // } 
+            else {
+              callback(null, result);
+            }
+          }
+    )
+}
 
 module.exports ={
     signup,
-    isValidAccount
+    isValidAccount,
+    login
 }

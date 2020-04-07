@@ -4,7 +4,7 @@ const router = new express.Router();
 //const multiparty = require("multiparty");
 // const fileType = require("file-type");
 // const fs = require("fs");
-// const sha256 = require("sha256");
+const sha256 = require("sha256");
 const jwt = require("jsonwebtoken");
 const sgMail = require("@sendgrid/mail");
 
@@ -21,9 +21,10 @@ const ACCEPTED_EMAIL = process.env.ACCEPTED_EMAIL;
 const STRIPE_CLIENT_ID = process.env.STRIPE_CLIENT_ID;
 
 sgMail.setApiKey(SENDGRID_API_KEY);
-
+//const token = jwt.sign(UNIQUE-IDENTIFIER, sihnature, expiresIn:'24')
 //================= SIGN UP ==============
-router.post("/api/users/signup", async(req,res)=>{
+//public
+router.post("/users/signup", async(req,res)=>{
     try{
         //const token = jwt.sign({ email }, JWT_EMAIL_KEY, { expiresIn: "24h" });
         //validate the form
@@ -34,7 +35,7 @@ router.post("/api/users/signup", async(req,res)=>{
             //If in STAGING MODE:
             if(process.env.MODE==="STAGING"){
                 //verification url
-                //var verificationURL ="localhost:" + process.env.PORT + "/users/verify?token=" + token;
+                // var verificationURL ="localhost:" + process.env.PORT + "/users/verify?token=" + token;
                 var msg = {
                         to: req.body.email.trim(),
                         from: 'thealimz758@ucla.edu',
@@ -45,6 +46,7 @@ router.post("/api/users/signup", async(req,res)=>{
             }
             else{
                 //
+
                 console.log("In production mode sending the verification email")
             }
             //send the verfication email
@@ -60,13 +62,26 @@ router.post("/api/users/signup", async(req,res)=>{
         res.status(409).send({ error: e });
     }
 })
-//User Login
-router.post("/api/users/login", (req, res) => {
-    console.log("user login")
-    //create new user
-
-    //trt save: await user.save() the send back res.status(201).send()
-    //catch(e): res.status(400).send()
+//User Login - public
+router.post("/users/login", async(req, res) => {
+    console.log(req.body)
+    if(req.body.password){
+        //hash the password
+        req.body.password= sha256(req.body.password)
+    }
+    console.log(req.body.password)
+    db.login(req.body.email, req.body.password, async (error,user)=>{
+        if(error){
+            res.status(401).send(error)
+        }
+        else{
+            //get a token
+            const token =  await user.generateAuthToken()
+            res.status(200).send({
+                authToken: token
+            });
+        }
+     })
 });
 //UPDATE USER
 //for patch an exisiting user in tryblock make sure to apply the validation as follows:
