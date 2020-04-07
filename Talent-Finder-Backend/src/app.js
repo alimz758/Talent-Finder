@@ -7,7 +7,7 @@ const session = require("express-session");
 const MongoStore = require("connect-mongo")(session);
 const userPerformerRouter = require("./userPerformer/index");
 //Express config
- const app = express();
+const app = express();
 // app.use(
 //     cors({
 //         origin: [process.env.FRONT_END_URL],
@@ -15,7 +15,19 @@ const userPerformerRouter = require("./userPerformer/index");
 //         credentials: true
 //     })
 // );
-  
+
+
+//// ATTENTION ////
+///this part of code should not be uncommented unless we need to be out of read////
+//a middleware
+///START//
+// app.use((req,res,next)=>{
+//     res.status(503).send("Our app is under maintanance, will be up soon!")
+// })
+///// End////
+
+//use middleware : new req -> middleware function->route handler
+
 app.use(express.json());
 //app.use(bodyParser.urlencoded({ extended: true }));
 //app.get() get url

@@ -1,6 +1,6 @@
 const express = require("express");
 const router = new express.Router();
-
+const UserPerformer = require("./userPerformer").UserPerformer;
 //const multiparty = require("multiparty");
 // const fileType = require("file-type");
 // const fs = require("fs");
@@ -11,7 +11,8 @@ const sgMail = require("@sendgrid/mail");
 const db = require("./controller.js");
 // const uploadFile = require("../db/awsS3_controller.js").uploadFile;
 // const deleteFile = require("../db/awsS3_controller.js").deleteFile;
-// const checkAuth = require("../middleware/jwt_authenticator.js");
+//middleware for auth
+const checkAuth = require("../middleware/jwt_authenticator.js");
 const tokenParser = require("../utils/token-parser.js");
 
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
@@ -88,7 +89,11 @@ router.post("/users/login", async(req, res) => {
 //const user = await User.findbyIdAndUpdate(req.param.id, req.body, {new:true, runValidators: true})
 //if(noUSER) => ERROR WITH 404
 
-
+//first run the middleware, checkAuth, to authenticate
+router.get("/users/my-info", checkAuth, async (req, res) => {
+    //after authenticating
+    res.send(req.user)
+ });
 //FIND BY ID
 // app.get('/users/:id', (req,res)=>{
 //     const _id = req.params.id
