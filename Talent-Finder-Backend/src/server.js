@@ -8,7 +8,7 @@ const corsOriginContoller = require("./middleware/cors_origin_control.js");
 require("dotenv").config({ override: true });
 
 //Port config for local and production 
-const port = process.env.PORT || 8000;
+const port = process.env.PORT || 3000 ;
 //console.log(process.env.PORT)
 console.log(
   chalk.green("[INIT]:") + " Service is in " +
@@ -39,6 +39,6 @@ app.get("/*", (req, res) => {
 //checkS3Connection();
 app.listen(port, () => {
   console.log(
-    chalk.green("[INIT]: ") + "Server Listening on Port " + chalk.yellow(port)
+    chalk.green("[INIT]: ") + "Server Listening on PORT " + chalk.yellow(port)
   );
 });

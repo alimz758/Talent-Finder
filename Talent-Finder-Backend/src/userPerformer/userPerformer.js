@@ -43,5 +43,17 @@ userPerformerSchema.methods.generateAuthToken = async function (){
     await user.save()
     return token
 }
+//helper methods to remove the provate data: password and tokens array from
+// the return object
+//call to res.send() would call this method
+userPerformerSchema.methods.toJSON = function(){
+    const user = this
+    const userObject = user.toObject()
+    //delete private data to send to the client
+    delete userObject.password
+    delete userObject.tokens
+
+    return userObject
+}
 const UserPerformer = mongoose.model("UserPerformer", userPerformerSchema);
 module.exports= {UserPerformer};
