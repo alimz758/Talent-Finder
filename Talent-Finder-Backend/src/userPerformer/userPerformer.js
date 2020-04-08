@@ -15,7 +15,7 @@ const userPerformerSchema = mongoose.Schema({
     password: {type:String, required:true},
     location: {type: String, default:""},
     //change this to upload resume
-    resume: String,
+    resume: { type: Buffer},
     profilePic: { type: Buffer},
     verified: { type: Boolean, default: false },
     createdAt: { type: Date, default: new Date() },

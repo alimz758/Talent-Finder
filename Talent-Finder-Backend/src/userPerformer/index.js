@@ -119,6 +119,7 @@ router.get("/users/verify", checkEmailAuth, (req,res)=>{
         //TODO
         //redirect to login page
 })
+//////PROFILE PICTURE
 //Create & update profile pic
 router.post("/users/me/profile-pic", checkAuth,db.profilePicUpload.single('profile-pic'),async(req,res)=>{
     //get access to the binary file of the image and store in db
@@ -151,6 +152,45 @@ router.get("/users/me/profile-pic", checkAuth, async(req,res)=>{
 router.delete("/users/me/profile-pic", checkAuth, async(req,res)=>{
     try{
         req.user.profilePic= undefined
+        await req.user.save()
+        res.send()
+    }
+    catch(e){
+        res.status(500).send()
+    }
+})
+//END OF PROFILE PIC
+//Create and/or update the resume
+router.post("/users/me/resume", checkAuth,db.resumeUpload.single('resume'),async(req,res)=>{
+    //get access to the binary file of the PDF file and store in db
+    req.user.resume=req.file.buffer
+    await req.user.save()
+    //200
+    res.send()
+}, 
+//call back to handle errors to send back to the client
+(error,req,res,next)=>{
+    res.status(400).send({error: error.message})
+})
+//get the resume
+router.get("/users/me/resume", checkAuth, async(req,res)=>{
+    try{
+        const user= req.user
+        if(!user.resume){
+            throw new Error("There is no resume")
+        }
+        //set the content-type
+        res.set('Content-Type','application/pdf')
+        res.send(user.resume)
+    }
+    catch (e){
+        res.status(404).send()
+    }
+})
+//delete resume
+router.delete("/users/me/resume", checkAuth, async(req,res)=>{
+    try{
+        req.user.resume= undefined
         await req.user.save()
         res.send()
     }

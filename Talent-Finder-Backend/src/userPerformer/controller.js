@@ -80,9 +80,30 @@ const profilePicUpload =multer({
         callback(undefined,true) 
     }
 })
+//middleware for resume upload
+const resumeUpload =multer({
+    //restrictions
+    limits:{
+        //5Mb Max Size is allowed
+        fileSize: 5000000
+    },
+    //filter the extensions that are allowed
+    //3 ways to use the call back
+        //1. callbacl(throw new Error("File must be an image, jpg, png..."))
+        //2. callback(undefined,true): things go well, nothing went wrong and files was accepeted
+        //3. callback(undefined, true): nothing went wrong but didn't accept the file
+    fileFilter(req,file,callback){
+        //accept jpg,png, jpeg
+        if(!file.originalname.endsWith(".pdf")){
+            return callback(new Error("File must be a PDF file"))
+        }
+        callback(undefined,true) 
+    }
+})
 module.exports ={
     signup,
     isValidAccount,
     login,
-    profilePicUpload
+    profilePicUpload,
+    resumeUpload
 }
