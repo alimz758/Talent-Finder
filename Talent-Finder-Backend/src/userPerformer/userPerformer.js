@@ -16,7 +16,7 @@ const userPerformerSchema = mongoose.Schema({
     location: {type: String, default:""},
     //change this to upload resume
     resume: String,
-    picType: { type: String, default: "png" },
+    profilePic: { type: Buffer},
     verified: { type: Boolean, default: false },
     createdAt: { type: Date, default: new Date() },
     education: {type: String, default:""},
@@ -49,10 +49,10 @@ userPerformerSchema.methods.generateAuthToken = async function (){
 userPerformerSchema.methods.toJSON = function(){
     const user = this
     const userObject = user.toObject()
-    //delete private data to send to the client
+    //delete fields to not send back to the client
     delete userObject.password
     delete userObject.tokens
-
+    delete userObject.profilePic
     return userObject
 }
 const UserPerformer = mongoose.model("UserPerformer", userPerformerSchema);

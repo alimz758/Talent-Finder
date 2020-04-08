@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const dataSchema = new mongoose.Schema({});
 const isEmail = require("isemail");
 const sha256 = require("sha256");
-
+const multer = require("multer");
 // Signup controller
 const signup = async (userInfo) =>{
     return new Promise (async (resolve, reject) =>{
@@ -60,9 +60,29 @@ const login = (email, password, callback)=>{
           }
     )
 }
-
+//middleware for uploading files
+const profilePicUpload =multer({
+    //restrictions
+    limits:{
+        //2Mb Max Size is allowed
+        fileSize: 2000000
+    },
+    //filter the extensions that are allowed
+    //3 ways to use the call back
+        //1. callbacl(throw new Error("File must be an image, jpg, png..."))
+        //2. callback(undefined,true): things go well, nothing went wrong and files was accepeted
+        //3. callback(undefined, true): nothing went wrong but didn't accept the file
+    fileFilter(req,file,callback){
+        //accept jpg,png, jpeg
+        if(!file.originalname.match(/\.(jpg|jpeg|png)$/)){
+            return callback(new Error("File must be an image with '.jpg', '.png' or '.jpeg' extension"))
+        }
+        callback(undefined,true) 
+    }
+})
 module.exports ={
     signup,
     isValidAccount,
-    login
+    login,
+    profilePicUpload
 }

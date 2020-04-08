@@ -1,29 +1,17 @@
 const express = require("express");
 const router = new express.Router();
-const UserPerformer = require("./userPerformer").UserPerformer;
-//const multiparty = require("multiparty");
-// const fileType = require("file-type");
-// const fs = require("fs");
 const sha256 = require("sha256");
-const jwt = require("jsonwebtoken");
 const sgMail = require("@sendgrid/mail");
-
+const sharp =require("sharp")
 const db = require("./controller.js");
-// const uploadFile = require("../db/awsS3_controller.js").uploadFile;
-// const deleteFile = require("../db/awsS3_controller.js").deleteFile;
 //middleware for auth
 const checkAuth = require("../middleware/jwt_authenticator.js");
 const checkEmailAuth = require("../middleware/jwt_email_auth.js");
-const tokenParser = require("../utils/token-parser.js");
-
-const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
-const JWT_EMAIL_KEY = process.env.JWT_EMAIL_KEY;
+//KEY
 const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
-const ACCEPTED_EMAIL = process.env.ACCEPTED_EMAIL;
-const STRIPE_CLIENT_ID = process.env.STRIPE_CLIENT_ID;
+
 
 sgMail.setApiKey(SENDGRID_API_KEY);
-//const token = jwt.sign(UNIQUE-IDENTIFIER, sihnature, expiresIn:'24')
 //first run the middleware, checkAuth, to authenticate
 router.get("/users/my-info", checkAuth, async (req, res) => {
     //after authenticatin 
@@ -41,7 +29,6 @@ router.post("/users/signup", async(req,res)=>{
             const user = await db.signup(req.body)
             //get a token for verification email
             const token = await user.generateAuthToken()
-            //const token = await newUserPerformer.generateAuthToken()
             //Construct the verification email
             //If in STAGING MODE:
             if(process.env.MODE==="STAGING"){
@@ -132,7 +119,45 @@ router.get("/users/verify", checkEmailAuth, (req,res)=>{
         //TODO
         //redirect to login page
 })
-
+//Create & update profile pic
+router.post("/users/me/profile-pic", checkAuth,db.profilePicUpload.single('profile-pic'),async(req,res)=>{
+    //get access to the binary file of the image and store in db
+    //format the image to 
+    const buffer = await sharp(req.file.buffer).png().toBuffer()
+    req.user.profilePic=buffer
+    await req.user.save()
+    //200
+    res.send()
+}, 
+//call back to handle errors to send back to the client
+(error,req,res,next)=>{
+    res.status(400).send({error: error.message})
+})
+router.get("/users/me/profile-pic", checkAuth, async(req,res)=>{
+    try{
+        const user= req.user
+        if(!user.profilePic){
+            throw new Error("There is no profile pic")
+        }
+        //set the content-type
+        res.set('Content-Type','image/png')
+        res.send(user.profilePic)
+    }
+    catch (e){
+        res.status(404).send()
+    }
+})
+//delete profile pic
+router.delete("/users/me/profile-pic", checkAuth, async(req,res)=>{
+    try{
+        req.user.profilePic= undefined
+        await req.user.save()
+        res.send()
+    }
+    catch(e){
+        res.status(500).send()
+    }
+})
 //Delete user
 router.delete("/users/me",checkAuth, async(req,res)=>{
     try{
