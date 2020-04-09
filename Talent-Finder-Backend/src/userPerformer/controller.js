@@ -1,6 +1,5 @@
 const UserPerformer = require("./userPerformer").UserPerformer;
 const mongoose = require("mongoose");
-const dataSchema = new mongoose.Schema({});
 const isEmail = require("isemail");
 const sha256 = require("sha256");
 const multer = require("multer");

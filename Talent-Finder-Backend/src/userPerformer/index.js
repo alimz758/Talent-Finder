@@ -22,6 +22,7 @@ router.get("/users/my-info", checkAuth, async (req, res) => {
 router.post("/users/my-info", checkAuth, async(req,res)=>{
     try{
         const user =req.user
+        user.name= req.body.name
         user.aboutMe= req.body.aboutMe
         user.location= req.body.location
         user.education= req.body.education
@@ -119,7 +120,6 @@ router.post("/users/logoutAll",checkAuth, async (req,res)=>{
     }
 });
 //TODO
-//UPDATE USER
 
 //verify email after signup
 router.get("/users/verify", checkEmailAuth, (req,res)=>{

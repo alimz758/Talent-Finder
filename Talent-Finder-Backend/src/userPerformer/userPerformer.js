@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
+const Media = require("../media/media.js").Media
 const userPerformerSchema = mongoose.Schema({
     name:{type: String, required:true}, // on the UI could be like actual name or artistic name
     email: {type: String, required:true, unique:true},
@@ -29,6 +30,13 @@ const userPerformerSchema = mongoose.Schema({
         }
     }]
 })
+//relation with Media
+userPerformerSchema.virtual('media',{
+    ref: 'Media',
+    localField:'_id', //here user _id
+    foreignField:'owner' //the field in Media that is related to the User Schema
+
+})
 //user method to generate a token
 userPerformerSchema.methods.generateAuthToken = async function (){
     const user = this
@@ -52,5 +60,11 @@ userPerformerSchema.methods.toJSON = function(){
     delete userObject.profilePic
     return userObject
 }
+//delete media when user is removed
+userPerformerSchema.pre('remove',async function(next){
+    const user =this
+    await Media.deleteMany({owner:user._id})
+    next()
+})
 const UserPerformer = mongoose.model("UserPerformer", userPerformerSchema);
 module.exports= {UserPerformer};
