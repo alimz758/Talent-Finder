@@ -18,6 +18,20 @@ router.get("/users/my-info", checkAuth, async (req, res) => {
     //send the user info
     res.send(req.user)
  });
+//Create/Update user info fields
+router.post("/users/my-info", checkAuth, async(req,res)=>{
+    try{
+        const user =req.user
+        user.aboutMe= req.body.aboutMe
+        user.location= req.body.location
+        user.education= req.body.education
+        await user.save()
+        res.send()
+    }
+    catch(e){
+        res.status(409).send({ error: e });
+    }
+})
 //================= SIGN UP ==============
 //public
 router.post("/users/signup", async(req,res)=>{
@@ -33,7 +47,6 @@ router.post("/users/signup", async(req,res)=>{
             //If in STAGING MODE:
             if(process.env.MODE==="STAGING"){
                 //verification url
-                console.log()
                 var verificationURL ="localhost:" + process.env.PORT + "/users/verify?token=" + token;
                 var msg = {
                         to: req.body.email.trim(),
@@ -57,7 +70,6 @@ router.post("/users/signup", async(req,res)=>{
     }
     //Couldn't signup
     catch(e){
-        console.log(e)
         res.status(409).send({ error: e });
     }
 })

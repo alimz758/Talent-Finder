@@ -51,9 +51,9 @@ const login = (email, password, callback)=>{
             else if (result === null) {
               callback({ error: "User with email and password not found" }, null);
             } 
-            // else if (result.verified === false) {
-            //   callback({ message: "Email not verified" }, null);
-            // } 
+            else if (result.verified === false) {
+              callback({ message: "Email has not been verified yet" }, null);
+            } 
             else {
               callback(null, result);
             }
