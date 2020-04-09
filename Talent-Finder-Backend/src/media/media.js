@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const Media  = mongoose.model('Media',{
+const mediaSchema = mongoose.Schema({
     //user with its _id is an owner
     media: Buffer,
     owner : {
@@ -12,7 +12,15 @@ const Media  = mongoose.model('Media',{
     createdAt: { type: Date, default: new Date() },
     likes: Number,
     location: String,
-    tags:Array
+    tags:Array,
+    description:String
 })
+//relation with Comment
+mediaSchema.virtual('comment',{
+    ref: 'Comment',
+    localField:'_id', //here user _id
+    foreignField:'owner' //the field in Comment that is related to the Media Schema
 
-module.exports = Media
+})
+const Media = mongoose.model("Media", mediaSchema);
+module.exports= {Media};

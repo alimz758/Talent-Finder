@@ -6,6 +6,7 @@ const session = require("express-session");
 const MongoStore = require("connect-mongo")(session);
 const userPerformerRouter = require("./userPerformer/index");
 const media = require("./media/index");
+const comment = require("./comment/index");
 //Express config
 const app = express();
 // app.use(
@@ -41,5 +42,6 @@ app.use(express.json());
   
 app.use(userPerformerRouter);
 app.use(media);
+app.use(comment)
 
 module.exports = app;

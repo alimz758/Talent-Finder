@@ -39,6 +39,7 @@ router.post("/users/signup", async(req,res)=>{
     try{
         //const token = jwt.sign({ email }, JWT_EMAIL_KEY, { expiresIn: "24h" });
         //validate the form
+    
         if( await db.isValidAccount(req.body.email, req.body.password)){
             //call signup controller to signup the user after doing the validations
             const user = await db.signup(req.body)
@@ -46,31 +47,34 @@ router.post("/users/signup", async(req,res)=>{
             const token = await user.generateAuthToken()
             //Construct the verification email
             //If in STAGING MODE:
-            if(process.env.MODE==="STAGING"){
-                //verification url
-                var verificationURL ="localhost:" + process.env.PORT + "/users/verify?token=" + token;
-                var msg = {
-                        to: req.body.email.trim(),
-                        from: 'thealimz758@ucla.edu',
-                        subject: 'Email Verification',
-                        text: 'Verify Please',
-                        html: '<strong>Verify your account</strong> '+ verificationURL ,
-                };
-            }
-            else{
-                //
-                console.log("In production mode sending the verification email")
-            }
+            // if(process.env.MODE==="STAGING"){
+            //     //verification url
+            //     var verificationURL ="localhost:" + process.env.PORT + "/users/verify?token=" + token;
+            //     var msg = {
+            //             to: req.body.email.trim(),
+            //             from: 'thealimz758@ucla.edu',
+            //             subject: 'Email Verification',
+            //             text: 'Verify Please',
+            //             html: '<strong>Verify your account</strong> '+ verificationURL ,
+            //     };
+            // }
+            // else{
+            //     //
+            //     console.log("In production mode sending the verification email")
+            // }
             //send the verfication email
-            sgMail.send(msg).then(()=>{
-                res.sendStatus(201)
-            }).catch((e)=>{
-                res.status(500).send({ error: e });
-            })
-        }  
+            // sgMail.send(msg).then(()=>{
+            //     res.sendStatus(201)
+            // }).catch((e)=>{
+            //     res.status(500).send({ error: e });
+            // })
+            res.status(201).send({user, token}) 
+        } 
+       
     }
     //Couldn't signup
     catch(e){
+        console.log(e)
         res.status(409).send({ error: e });
     }
 })

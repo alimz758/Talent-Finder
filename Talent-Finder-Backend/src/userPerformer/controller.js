@@ -8,15 +8,13 @@ const signup = async (userInfo) =>{
     return new Promise (async (resolve, reject) =>{
         //hash the password
         userInfo.password = sha256(userInfo.password)
-        var username= userInfo.username
-        var email = userInfo.email
         try{
             //create a new user in DB
             const newUserPerformer = await UserPerformer.create(userInfo)
             resolve(newUserPerformer)
         }
         catch (e){
-            User.deleteOne({ username: userInfo.username }, () => {
+            UserPerformer.deleteOne({ username: userInfo.email }, () => {
                 reject(e);
             });
         }

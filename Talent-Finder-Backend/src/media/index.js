@@ -1,23 +1,25 @@
 const express = require("express");
 const router = new express.Router();
-const Media= require("./media")
+const Media= require("./media").Media
 const controller = require("./controller.js");
 //middleware for auth
 const checkAuth = require("../middleware/jwt_authenticator.js");
 
-//upload a photo/video to the user profolio
+//upload a photo/video to the user profolio ; key=media
 router.post("/users/media", checkAuth, controller.mediaUpload.single('media'),async(req,res)=>{
-    //const media = await Media.create(mediaInfo)
-    const media = new Media({
+    //object 
+    const mediaInfo = {
+        description: req.body.description,
         location: req.body.location,
         media:req.file.buffer,
         owner: req.user._id
-    })
+    }
     try{
-        await media.save()
+        await Media.create(mediaInfo)
         res.status(201).send()
     }
     catch(e){
+
         res.status(500).send()
     }
 })
@@ -27,10 +29,11 @@ router.get("/users/media/all",checkAuth,async(req,res)=>{
         //populate the media for the current user using the virtual path
         await req.user.populate('media').execPopulate()
         //TODO SENDING ONLY THE BUFFERS
+
         res.send(req.user.media)
     }
     catch(e){
-        res.status(500).send()
+        res.status(500).send(e)
     }
 })
 //get a specific media
@@ -58,7 +61,7 @@ router.delete("/users/media/:id", checkAuth, async(req,res)=>{
             //if media is not found send a 404
             res.status(404).send()
         }
-        res.send()
+        res.send( )
     }
     catch(e){
         res.status(500).send()
