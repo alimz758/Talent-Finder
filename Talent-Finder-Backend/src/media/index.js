@@ -43,11 +43,11 @@ router.post("/media/:id/likes",checkAuth,async(req,res)=>{
         }
         //like should be a number from the client either +1: liking, -1: undo the liking(only if previously liked)
         media.numberOfLikes+=parseInt(req.body.like)
-        media.whoLikedWithID.push(req.user.id)
+        media.likesStats.push({likerName:req.user.name,likerID:req.user.id})
         await media.save()
         const numberOfLikes=   media.numberOfLikes
-        const whoLikedWithID =media.whoLikedWithID
-        res.send({numberOfLikes, whoLikedWithID})
+        const currentLikesStats = media.likesStats
+        res.send({numberOfLikes, currentLikesStats})
     }
     catch(e){
         res.status(500).send({error:e})

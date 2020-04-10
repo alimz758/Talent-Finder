@@ -15,7 +15,11 @@ const mediaSchema = mongoose.Schema({
     createdAt: { type: Date, default: new Date() },
     editedAt:{type:Date},
     numberOfLikes: {type:Number, default:0},
-    whoLikedWithID: Array,
+    likesStats:[{
+        likerName:String,
+        likerID: mongoose.Schema.Types.ObjectId,
+        likerURL:String
+    }],
     location: String,
     tags:Array,
     url: {type: String, required: true},
