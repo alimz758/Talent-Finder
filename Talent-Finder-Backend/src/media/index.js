@@ -30,17 +30,37 @@ router.post("/media", checkAuth, controller.mediaUpload.single('media'),async(re
         res.status(201).send()
     }
     catch(e){
-        res.status(500).send()
+        res.status(500).send({error:e})
+    }
+})
+//Add a like a to the media
+//send back the number of likes an array of Users' ObjectIDs who liked the Media
+router.post("/media/:id/likes",checkAuth,async(req,res)=>{
+    try{
+        const media = await Media.findById({_id:req.params.id})
+        if(!media){
+            return res.status(404).send("Error: No such a media to like")
+        }
+        //like should be a number from the client either +1: liking, -1: undo the liking(only if previously liked)
+        media.numberOfLikes+=parseInt(req.body.like)
+        media.whoLikedWithID.push(req.user.id)
+        await media.save()
+        const numberOfLikes=   media.numberOfLikes
+        const whoLikedWithID =media.whoLikedWithID
+        res.send({numberOfLikes, whoLikedWithID})
+    }
+    catch(e){
+        res.status(500).send({error:e})
     }
 })
 //get a specific media
 router.get("/media/:id", checkAuth, async(req,res)=>{
     try{
         //get the media with its id and the owner
-        const mediaInfo = await Media.findOne({_id:req.params.id , owner:req.user.id})
+        const mediaInfo = await Media.findById({_id:req.params.id})
         if(!mediaInfo){
             //if media is not found send a 404
-            res.status(404).send()
+            return res.status(404).send()
         }
         const mediaOwnerName = req.user.name
         //await req.user.populate('media').execPopulate()
@@ -49,7 +69,7 @@ router.get("/media/:id", checkAuth, async(req,res)=>{
         res.send({mediaInfo, mediaOwnerName ,comments})
     }
     catch(e){
-        res.status(500).send(e)
+        res.status(500).send({error:e})
     }
 })
 //get all medias for the current user
@@ -81,7 +101,7 @@ router.delete("/media/:id", checkAuth, async(req,res)=>{
         res.send()
     }
     catch(e){
-        res.status(500).send()
+        res.status(500).send({error:e})
     }
 })
 module.exports= router;

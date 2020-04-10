@@ -4,6 +4,7 @@ const sha256 = require("sha256");
 const sgMail = require("@sendgrid/mail");
 const sharp =require("sharp")
 const db = require("./controller.js");
+const UserPerformer = require("./userPerformer").UserPerformer
 //middleware for auth
 const checkAuth = require("../middleware/jwt_authenticator.js");
 const checkEmailAuth = require("../middleware/jwt_email_auth.js");
@@ -109,7 +110,7 @@ router.post("/users/logout",checkAuth, async (req,res)=>{
         res.send("User Logged out.")
     }
     catch(e){
-        res.status(500).send()
+        res.status(500).send({error:e})
     }
 });
 //remove all the sessions open and log all out
@@ -121,7 +122,7 @@ router.post("/users/logoutAll",checkAuth, async (req,res)=>{
         res.status(200).send("All sessions are removed")
     }
     catch(e){
-        res.status(500).send()
+        res.status(500).send({error:e})
     }
 });
 //TODO
@@ -162,7 +163,7 @@ router.get("/users/me/profile-pic", checkAuth, async(req,res)=>{
         res.send(user.profilePic)
     }
     catch (e){
-        res.status(404).send()
+        res.status(404).send({error:e})
     }
 })
 //delete profile pic
@@ -173,7 +174,7 @@ router.delete("/users/me/profile-pic", checkAuth, async(req,res)=>{
         res.send()
     }
     catch(e){
-        res.status(500).send()
+        res.status(500).send({error:e})
     }
 })
 //END OF PROFILE PIC
@@ -201,7 +202,7 @@ router.get("/users/me/resume", checkAuth, async(req,res)=>{
         res.send(user.resume)
     }
     catch (e){
-        res.status(404).send()
+        res.status(404).send({error:e})
     }
 })
 //delete resume
@@ -212,7 +213,7 @@ router.delete("/users/me/resume", checkAuth, async(req,res)=>{
         res.send()
     }
     catch(e){
-        res.status(500).send()
+        res.status(500).send({error:e})
     }
 })
 //Delete user
@@ -223,7 +224,23 @@ router.delete("/users/me",checkAuth, async(req,res)=>{
         res.send(req.user)
     }
     catch(e){
-        res.status(500).send()
+        res.status(500).send({error:e})
+    }
+})
+//TODO
+//GET USER BY ID
+router.get("/users/:id",checkAuth, async(req,res)=>{
+    try{
+        //using mongoose remove() method to delete the user from DB
+        const user = await UserPerformer.findById({_id:req.params.id})
+        if(!user){
+            return res.status(404).send()
+        }
+        res.send({userInfo:user})
+    }
+    catch(e){
+        console.log(e)
+        res.status(500).send({error:e})
     }
 })
  module.exports= router;

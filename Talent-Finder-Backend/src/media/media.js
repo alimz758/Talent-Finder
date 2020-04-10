@@ -12,10 +12,10 @@ const mediaSchema = mongoose.Schema({
     },
     subject: String,
     private: {type:Boolean,default:false},//only connection can see
-    type: {type: String},
     createdAt: { type: Date, default: new Date() },
     editedAt:{type:Date},
-    likes: Number,
+    numberOfLikes: {type:Number, default:0},
+    whoLikedWithID: Array,
     location: String,
     tags:Array,
     url: {type: String, required: true},

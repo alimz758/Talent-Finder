@@ -16,6 +16,7 @@ const userPerformerSchema = mongoose.Schema({
     gender: {type: String},
     password: {type:String, required:true},
     location: {type: String},
+    userURL:String,
     resume: { type: Buffer},
     profilePic: { type: Buffer},
     verified: { type: Boolean, default: false },

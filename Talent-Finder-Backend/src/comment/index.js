@@ -1,6 +1,6 @@
 const express = require("express");
 const router = new express.Router();
-//const Media= require("./media").Media
+const Media= require("../media/media").Media
 //const controller = require("./controller.js");
 //middleware for auth
 const checkAuth = require("../middleware/jwt_authenticator.js");
@@ -8,7 +8,6 @@ const Comment = require("./comment").Comment
 
 //Write a comment for a media:mediaID
 router.post("/media/:id/comment", checkAuth,async(req,res)=>{
-    
     const commentInfo = {
         content: req.body.content,
         commentAuthorName: req.user.name,
@@ -16,6 +15,10 @@ router.post("/media/:id/comment", checkAuth,async(req,res)=>{
         commentOwner: req.params.id
     }
     try{
+        const media =await Media.findById({_id:req.params.id})
+        if(!media){
+            return res.status(404).send("Error: No such a media to write a comment")
+        }
         await Comment.create(commentInfo)
         res.status(201).send()
     }
