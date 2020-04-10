@@ -22,8 +22,9 @@ router.get("/users/my-info", checkAuth, async (req, res) => {
 router.post("/users/my-info", checkAuth, async(req,res)=>{
     try{
         const user =req.user
+        user.gender = req.user.gender
         user.name= req.body.name
-        user.aboutMe= req.body.aboutMe
+        user.bio= req.body.bio
         user.location= req.body.location
         user.education= req.body.education
         await user.save()

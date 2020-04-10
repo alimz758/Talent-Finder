@@ -13,37 +13,38 @@ router.post("/media/:id/comment", checkAuth,async(req,res)=>{
         content: req.body.content,
         commentAuthorName: req.user.name,
         commentAuthorId:req.user.id,
-        owner: req.params.id
+        commentOwner: req.params.id
     }
     try{
         await Comment.create(commentInfo)
         res.status(201).send()
     }
     catch(e){
-        res.status(500).send()
+        res.status(500).send({error:e})
     }
 })
 //Edit a comment
 router.patch("/media/:id/comment/:id", checkAuth,async(req,res)=>{
     try{
-        //commentID:  req.params.id
-        //console.log(req.params.id)
-        //console.log(req.user)
+        //commentID:  req.params.id)
         const originalComment = await Comment.findById(req.params.id)
-        //console.log(comment)
-        //console.log(req)
+        //TODO 
+        //need more testing
         if(originalComment.commentAuthorId.toString()!==req.user.id){
             return res.status(400).send({error: "Permission Denied! Only the author of this comment can edit it"})
         }
         originalComment.content=req.body.content
         originalComment.editedAt = new Date()
-        //console.log(originalComment)
         await originalComment.save()
         res.status(200).send()
     }
     catch(e){
+        //TODO 
+        //error doesn't get sent back
         console.log(e)
-        res.status(400).send(e)
+        res.status(400).send({error:e})
     }
 })
+//TODO:
+//Delete a comment
 module.exports= router;

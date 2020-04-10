@@ -6,7 +6,7 @@ const commentScheme = mongoose.Schema({
     commentAuthorName:String,
     commentAuthorId: {type:mongoose.Schema.Types.ObjectId},
     //imageID
-    owner : {
+    commentOwner : {
         type: mongoose.Schema.Types.ObjectId,
         required:true,
         ref:'Media'

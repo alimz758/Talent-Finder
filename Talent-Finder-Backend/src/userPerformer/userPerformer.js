@@ -12,17 +12,18 @@ const userPerformerSchema = mongoose.Schema({
             }
         }
     }, //for now do +18
-    aboutMe: {type: String},
+    bio: {type: String},
+    gender: {type: String},
     password: {type:String, required:true},
     location: {type: String},
-    //change this to upload resume
     resume: { type: Buffer},
     profilePic: { type: Buffer},
     verified: { type: Boolean, default: false },
+    private: { type: Boolean, default: false },
+    activityStatus: { type: Boolean, default: false },
     createdAt: { type: Date, default: new Date() },
     education: {type: String},
-    genreToPlay: {type: String},
-    pastExperience:{type: String, default:""},
+    role: {type: String},
     tokens:[{
         token:{
             type: String,
