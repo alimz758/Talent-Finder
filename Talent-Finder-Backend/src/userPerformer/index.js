@@ -239,7 +239,21 @@ router.get("/users/:id",checkAuth, async(req,res)=>{
         res.send({userInfo:user})
     }
     catch(e){
-        console.log(e)
+        res.status(500).send({error:e})
+    }
+})
+//get user's all media
+//TODO: SNEDING BACK SORTED BASED ON CREATEDAT DATE
+router.get("/users/:id/media",checkAuth, async(req,res)=>{
+    try{
+        const user = await UserPerformer.findById({_id:req.params.id})
+        if(!user){
+            return res.status(404).send()
+        }
+        await req.user.populate('media').execPopulate()
+        res.send({media: req.user.media})
+    }
+    catch(e){
         res.status(500).send({error:e})
     }
 })

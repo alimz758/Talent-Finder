@@ -12,17 +12,16 @@ const PORT = process.env.PORT
 router.post("/media", checkAuth, controller.mediaUpload.single('media'),async(req,res)=>{
     //object
     //TODO: process.env.DOMAIN_NAME NOT WORKING
-    var id= mongoose.Types.ObjectId()
-    var subjectToSearch =req.body.subject.trim().replace(/\s+/g, '-').toLowerCase()
+    // var id= mongoose.Types.ObjectId()
+    // var subjectToSearch =req.body.subject.trim().replace(/\s+/g, '-').toLowerCase()
     const mediaInfo = {
-        _id: id,
-        owner: req.user.name,
+        ownerName: req.user.name,
         description: req.body.description,
         subject: req.body.subject,
         location: req.body.location,
         media:req.file.buffer,
         //url
-        url: "localhost:"+ PORT + "/media/"+ id.toString()+"/"+ subjectToSearch,
+        //url: "localhost:"+ PORT + "/media/"+ id.toString()+"/"+ subjectToSearch,
         owner: req.user._id
     }
     try{
@@ -69,23 +68,6 @@ router.get("/media/:id", checkAuth, async(req,res)=>{
         res.send({mediaInfo, mediaOwnerName ,comments})
     }
     catch(e){
-        res.status(500).send({error:e})
-    }
-})
-//get all medias for the current user
-//TODO: NOT WORKING!!!
-router.get("/media/all",checkAuth,async(req,res)=>{
-    console.log("wefw")
-    try{
-        console.log("here")
-        //populate the media for the current user using the virtual path
-        await req.user.populate('media').execPopulate()
-        //TODO HOW SENDING ONLY THE BUFFERS and all to
-        console.log(req.user.media)
-        res.send(req.user.media)
-    }
-    catch(e){
-        console.log(e)
         res.status(500).send({error:e})
     }
 })

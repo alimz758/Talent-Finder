@@ -1,8 +1,6 @@
 const mongoose = require("mongoose");
 
 const mediaSchema = mongoose.Schema({
-    //user with its _id is an owner
-    _id: mongoose.Schema.Types.ObjectId,
     media: Buffer,
     ownerName: String,
     owner : {
@@ -22,7 +20,7 @@ const mediaSchema = mongoose.Schema({
     }],
     location: String,
     tags:Array,
-    url: {type: String, required: true},
+    url: {type: String},//Public URL of the media
     description:String
 })
 //relation with Comment
