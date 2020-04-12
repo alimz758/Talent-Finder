@@ -8,6 +8,8 @@ const signup = async (userInfo) =>{
     return new Promise (async (resolve, reject) =>{
         //hash the password
         userInfo.password = sha256(userInfo.password)
+        //TODO JUST FOR NOW; SHOULD BE GETTING EMAIL VERIFIACTION
+        userInfo.verified=true
         try{
             //create a new user in DB
             const newUserPerformer = await UserPerformer.create(userInfo)

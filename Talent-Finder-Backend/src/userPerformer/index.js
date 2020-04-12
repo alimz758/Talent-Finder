@@ -227,7 +227,6 @@ router.delete("/users/me",checkAuth, async(req,res)=>{
         res.status(500).send({error:e})
     }
 })
-//TODO
 //GET USER BY ID
 router.get("/users/:id",checkAuth, async(req,res)=>{
     try{

@@ -1,11 +1,11 @@
 const express = require("express");
 const router = new express.Router();
 const Media= require("../media/media").Media
+const mongoose = require("mongoose")
 //const controller = require("./controller.js");
 //middleware for auth
 const checkAuth = require("../middleware/jwt_authenticator.js");
 const Comment = require("./comment").Comment
-
 //Write a comment for a media:mediaID
 router.post("/media/:id/comment", checkAuth,async(req,res)=>{
     const commentInfo = {
@@ -23,6 +23,7 @@ router.post("/media/:id/comment", checkAuth,async(req,res)=>{
         res.status(201).send()
     }
     catch(e){
+        console.log(e)
         res.status(500).send({error:e})
     }
 })

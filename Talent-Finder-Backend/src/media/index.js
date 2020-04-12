@@ -75,12 +75,14 @@ router.get("/media/:id", checkAuth, async(req,res)=>{
 router.delete("/media/:id", checkAuth, async(req,res)=>{
     try{
         //get the media with its id and the owner
-        const media = await Media.findOneAndDelete({_id:req.params.id , owner:req.user.id})
+        const media = await Media.findById({_id:req.params.id , owner:req.user.id})
         if(!media){
             //if media is not found send a 404
             res.status(404).send()
         }
-        res.send()
+        //Remove the meida, it'll remove all the comments assoiciated with this media
+        await media.remove()
+        res.send(media)
     }
     catch(e){
         res.status(500).send({error:e})
