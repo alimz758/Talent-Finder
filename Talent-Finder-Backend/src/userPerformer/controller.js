@@ -8,6 +8,8 @@ const signup = async (userInfo) =>{
     return new Promise (async (resolve, reject) =>{
         //hash the password
         userInfo.password = sha256(userInfo.password)
+        //store email all in lowercase
+        userInfo.email= userInfo.email.toLowerCase()
         //TODO JUST FOR NOW; SHOULD BE GETTING EMAIL VERIFIACTION
         userInfo.verified=true
         try{
@@ -26,7 +28,7 @@ const signup = async (userInfo) =>{
 const isValidAccount = (email, password)=>{
     return new Promise(async (resolve, reject)=>{
         //check the database and see there is a user with an exisiting email
-        const user = await UserPerformer.findOne({email:email.trim()})
+        const user = await UserPerformer.findOne({email:email.toLowerCase().trim()})
         //if found a user
         if(user){
             //TODO: CHECK FOR VERIFICATION: LIKE IF THERE IS AN USER THAT IS NOT VERIFIED YET
@@ -40,7 +42,7 @@ const isValidAccount = (email, password)=>{
 const login = (email, password, callback)=>{
     UserPerformer.findOne(
         {
-            email: email,
+            email: email.toLowerCase(),
             password: password
         },
         (err, result) => {
