@@ -24,7 +24,8 @@ const mediaSchema = mongoose.Schema({
     location: String,
     tags:Array,
     url: {type: String},//Public URL of the media
-    description:String
+    description:String,
+    mediaBucketKey:String
 })
 //relation with Comment
 mediaSchema.virtual('comments',{
@@ -39,5 +40,14 @@ mediaSchema.pre('remove',async function(next){
     await Comments.deleteMany({commentOwner:media._id})
     next()
 })
+mediaSchema.methods.toJSON = function(){
+    const media = this
+    const mediaObject = media.toObject()
+    //delete fields to not send back to the client
+    delete mediaObject.awsFilePathMediaID
+    delete mediaObject.mediaBucketKey
+    delete mediaObject.url
+    return mediaObject
+}
 const Media = mongoose.model("Media", mediaSchema);
 module.exports= {Media};

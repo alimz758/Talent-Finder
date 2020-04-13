@@ -14,6 +14,7 @@ const fs = require("fs");
 //AWS S3 storage
 const uploadFile = require("../db/awsS3_controller.js").uploadFile;
 const deleteFile = require("../db/awsS3_controller.js").deleteFile;
+const getFile = require("../db/awsS3_controller.js").getFile;
 //post media for aws:
 router.post("/aws/media", checkAuth,async(req,res)=>{
     const form = new multiparty.Form();
@@ -41,10 +42,10 @@ router.post("/aws/media", checkAuth,async(req,res)=>{
 
             const email = req.user.email
             const mediaID = new mongoose.mongo.ObjectId();
-            console.log(mediaID)
             const fileName = `mediaFolder/${email}/${mediaID}-media`;
             //upload on AWS S3
             const data = await uploadFile(buffer, fileName, type);
+            console.log(data)
             const mediaInfo = {
                 ownerName: req.user.name,
                 description: req.body.description,
@@ -53,42 +54,17 @@ router.post("/aws/media", checkAuth,async(req,res)=>{
                 owner: req.user._id,
                 awsFilePathMediaID:mediaID,
                 url: data.Location,
-                mediaType: `.${type.ext}`
+                mediaType: type.ext,
+                mediaBucketKey: data.key
             }
             await Media.create(mediaInfo)
             res.status(201).send()
         }
         catch(e){
-            console.log(e)
             return res.status(500);
         }
     });
 })
-//upload a photo/video to the user profolio ; key=media
-router.post("/media", checkAuth, controller.mediaUpload.single('media'),async(req,res)=>{
-    //object
-    //TODO: process.env.DOMAIN_NAME NOT WORKING
-    // var id= mongoose.Types.ObjectId()
-    // var subjectToSearch =req.body.subject.trim().replace(/\s+/g, '-').toLowerCase()
-    const mediaInfo = {
-        ownerName: req.user.name,
-        description: req.body.description,
-        subject: req.body.subject,
-        location: req.body.location,
-        media:req.file.buffer,
-        //url
-        //url: "localhost:"+ PORT + "/media/"+ id.toString()+"/"+ subjectToSearch,
-        owner: req.user._id
-    }
-    try{
-        await Media.create(mediaInfo)
-        res.status(201).send()
-    }
-    catch(e){
-        res.status(500).send({error:e})
-    }
-})
-
 //Add a like a to the media
 //send back the number of likes an array of Users' ObjectIDs who liked the Media
 router.post("/media/:id/likes",checkAuth,async(req,res)=>{
@@ -110,6 +86,7 @@ router.post("/media/:id/likes",checkAuth,async(req,res)=>{
     }
 })
 //get a specific media
+//ONLY the mida itself not other json with it
 router.get("/media/:id", checkAuth, async(req,res)=>{
     try{
         //get the media with its id and the owner
@@ -118,13 +95,31 @@ router.get("/media/:id", checkAuth, async(req,res)=>{
             //if media is not found send a 404
             return res.status(404).send()
         }
-        const mediaOwnerName = req.user.name
-        //await req.user.populate('media').execPopulate()
+        //get the object from S3 Bucket
+        const data = await getFile(mediaInfo.mediaBucketKey);
+        res.set('Content-Type',data.ContentType)
+        res.send(data.Body)
+    }
+    catch(e){
+        res.status(500).send({error:e})
+    }
+})
+//get a media INFO
+router.get("/media-info/:id", checkAuth, async(req,res)=>{
+    try{
+        //get the media with its id and the owner
+        const mediaInfo = await Media.findById({_id:req.params.id})
+        if(!mediaInfo){
+            //if media is not found send a 404
+            return res.status(404).send()
+        }
         await mediaInfo.populate('comments').execPopulate()
+        const mediaOwnerName = req.user.name
         const comments= mediaInfo.comments
         res.send({mediaInfo, mediaOwnerName ,comments})
     }
     catch(e){
+        console.log(e)
         res.status(500).send({error:e})
     }
 })

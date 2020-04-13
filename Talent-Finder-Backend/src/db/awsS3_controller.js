@@ -50,7 +50,7 @@ const uploadFile = (buffer, name, type) => {
     //Object key for which the multipart upload is to be initiated.
     Key: `${name}.${type.ext}`,
     //The server-side encryption algorithm used when storing this object in Amazon S3 (for example, AES256, aws:kms).
-    // ServerSideEncryption:"aws:kms"
+    ServerSideEncryption:"aws:kms"
   };
   return s3
     .upload(params)
@@ -68,10 +68,21 @@ const deleteFile = (name, type) => {
     .promise()
     .catch();
 };
-
+//get a file by decrypting
+const getFile= (key) => {
+  const params = {
+    Bucket: S3_BUCKET,
+    Key: key
+  };
+  return s3
+    .getObject(params)
+    .promise()
+    .catch();
+};
 module.exports = {
   s3,
   checkS3Connection,
   uploadFile,
-  deleteFile
+  deleteFile,
+  getFile
 };
