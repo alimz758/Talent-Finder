@@ -8,6 +8,8 @@ const controller = require("./controller.js");
 const checkAuth = require("../middleware/jwt_authenticator.js");
 const DOMAIN_NAME = process.env.DOMAIN_NAME
 const PORT = process.env.PORT
+const BUCKET_NAME= process.env.AWS_BUCKET_NAME
+const AWS_REGION= process.env.AWS_REGION
 const multiparty = require("multiparty");
 const fileType = require("file-type");
 const fs = require("fs");
@@ -16,7 +18,7 @@ const uploadFile = require("../db/awsS3_controller.js").uploadFile;
 const deleteFile = require("../db/awsS3_controller.js").deleteFile;
 const getFile = require("../db/awsS3_controller.js").getFile;
 //post media for aws:
-router.post("/aws/media", checkAuth,async(req,res)=>{
+router.post("/media", checkAuth,async(req,res)=>{
     const form = new multiparty.Form();
     console.log(form)
     form.parse(req, async (error, fields, files) => {
@@ -25,27 +27,26 @@ router.post("/aws/media", checkAuth,async(req,res)=>{
             return res.status(400).send(error);
         }
         try {
-            //NOTE: THE KEY FOR MEIDA POST REQUEST IS 'file'
-            console.log("file: ", files)
-            const path = files.file[0].path;
+            //NOTE: THE KEY FOR MEIDA POST REQUEST IS 'media'
+            //console.log("file: ", files)
+            const path = files.media[0].path;
             const buffer = fs.readFileSync(path);
-            const originalFileName= files.file[0].originalFilename
             const type = await fileType.fromBuffer(buffer);
-            const videoFileType= ["3GPP", "AVI", "FLV", "MOV", "MPEG4", "MPEGPS", "WebM", "WMV"]
-            const allowedFileType = ["jpg", "jpeg", "heic", "png"];
+            const allowedFileType = ["jpg", "jpeg", "heic", "png","3GPP", "AVI", "FLV", "MOV", "MPEG4", "MPEGPS", "WebM", "WMV"];
             //check the file extension
             if (!type || !allowedFileType.includes(type.ext)) {
                 return res.status(400).send({
-                    message: "ERROR: file type must be of: jpg, jpeg, heic, or png"
+                    message: "ERROR: file type must be of: for Images: jpg, jpeg, heic, png. For Videos: 3GPP, AVI, FLV, MOV, MPEG4, MPEGPS, WebM, WMV"
                 });
             }
-
             const email = req.user.email
             const mediaID = new mongoose.mongo.ObjectId();
-            const fileName = `mediaFolder/${email}/${mediaID}-media`;
+            const fileName = `${email}/${mediaID}-media`;
+            const userFolderPath = `${email}/`
+            req.user.userFolderPathOnS3= userFolderPath
+            await req.user.save()
             //upload on AWS S3
             const data = await uploadFile(buffer, fileName, type);
-            console.log(data)
             const mediaInfo = {
                 ownerName: req.user.name,
                 description: req.body.description,
@@ -55,12 +56,13 @@ router.post("/aws/media", checkAuth,async(req,res)=>{
                 awsFilePathMediaID:mediaID,
                 url: data.Location,
                 mediaType: type.ext,
-                mediaBucketKey: data.key
+                mediaBucketKey: data.key,
             }
             await Media.create(mediaInfo)
             res.status(201).send()
         }
         catch(e){
+
             return res.status(500);
         }
     });
@@ -130,13 +132,15 @@ router.delete("/media/:id", checkAuth, async(req,res)=>{
         const media = await Media.findById({_id:req.params.id , owner:req.user.id})
         if(!media){
             //if media is not found send a 404
-            res.status(404).send()
+            return res.status(404).send()
         }
-        //Remove the meida, it'll remove all the comments assoiciated with this media
+        //Remove the meida object from S3, it'll remove all the comments assoiciated with this media
+        await deleteFile(media.mediaBucketKey);
         await media.remove()
         res.send(media)
     }
     catch(e){
+        console.log(e)
         res.status(500).send({error:e})
     }
 })

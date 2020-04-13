@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
 const Media = require("../media/media.js").Media
+const deleteDirectory = require("../db/awsS3_controller.js").deleteDirectory;
 const userPerformerSchema = mongoose.Schema({
     name:{type: String, required:true}, // on the UI could be like actual name or artistic name
     email: {type: String, required:true, unique:true},
@@ -17,6 +18,7 @@ const userPerformerSchema = mongoose.Schema({
     password: {type:String, required:true},
     location: {type: String},
     userURL:String,
+    userFolderPathOnS3:String,
     resume: { type: Buffer},
     profilePic: { type: Buffer},
     verified: { type: Boolean, default: false },
@@ -60,11 +62,15 @@ userPerformerSchema.methods.toJSON = function(){
     delete userObject.password
     delete userObject.tokens
     delete userObject.profilePic
+    delete userObject.userFolderPathOnS3
     return userObject
 }
 //delete media when user is removed
 userPerformerSchema.pre('remove',async function(next){
     const user =this
+    //delete the entier user media folder on S3 before delting the user
+    await deleteDirectory(user.userFolderPathOnS3);
+    //delete the media collection for the user
     await Media.deleteMany({owner:user._id})
     next()
 })

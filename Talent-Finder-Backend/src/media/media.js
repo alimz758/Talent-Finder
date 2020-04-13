@@ -25,7 +25,7 @@ const mediaSchema = mongoose.Schema({
     tags:Array,
     url: {type: String},//Public URL of the media
     description:String,
-    mediaBucketKey:String
+    mediaBucketKey:String,
 })
 //relation with Comment
 mediaSchema.virtual('comments',{

@@ -58,10 +58,10 @@ const uploadFile = (buffer, name, type) => {
     .catch();
 };
 //delete a file by  passing (filename, and extention)
-const deleteFile = (name, type) => {
+const deleteFile = (key) => {
   const params = {
     Bucket: S3_BUCKET,
-    Key: `${name}.${type}`
+    Key: key
   };
   return s3
     .deleteObject(params)
@@ -79,10 +79,33 @@ const getFile= (key) => {
     .promise()
     .catch();
 };
+//Delete the folder in S3
+async function deleteDirectory( dir) {
+  const listParams = {
+      Bucket: S3_BUCKET,
+      Prefix: dir
+  };
+  //console.log(dir)
+  const listedObjects = await s3.listObjectsV2(listParams).promise();
+  //if no content then 
+  //console.log(listedObjects)
+  //console.log(listedObjects.Contents.length)
+  if (listedObjects.Contents.length === 0) return;
+  const deleteParams = {
+      Bucket: S3_BUCKET,
+      Delete: { Objects: [] }
+  };
+  listedObjects.Contents.forEach(({ Key }) => {
+      deleteParams.Delete.Objects.push({ Key });
+  });
+  await s3.deleteObjects(deleteParams).promise();
+  if (listedObjects.IsTruncated) await deleteDirectory(dir);
+}
 module.exports = {
   s3,
   checkS3Connection,
   uploadFile,
   deleteFile,
-  getFile
+  getFile,
+  deleteDirectory
 };

@@ -224,6 +224,7 @@ router.delete("/users/me",checkAuth, async(req,res)=>{
         res.send(req.user)
     }
     catch(e){
+        console.log(e)
         res.status(500).send({error:e})
     }
 })
