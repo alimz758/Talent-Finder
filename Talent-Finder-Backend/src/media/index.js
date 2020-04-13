@@ -17,15 +17,19 @@ const deleteFile = require("../db/awsS3_controller.js").deleteFile;
 //post media for aws:
 router.post("/aws/media", checkAuth,async(req,res)=>{
     const form = new multiparty.Form();
+    console.log(form)
     form.parse(req, async (error, fields, files) => {
         if (error) {
+            console.log(error)
             return res.status(400).send(error);
         }
         try {
-            console.log("file: ", file)
+            //NOTE: THE KEY FOR MEIDA POST REQUEST IS 'file'
+            console.log("file: ", files)
             const path = files.file[0].path;
             const buffer = fs.readFileSync(path);
-            const type = fileType(buffer);
+            const originalFileName= files.file[0].originalFilename
+            const type = await fileType.fromBuffer(buffer);
             const videoFileType= ["3GPP", "AVI", "FLV", "MOV", "MPEG4", "MPEGPS", "WebM", "WMV"]
             const allowedFileType = ["jpg", "jpeg", "heic", "png"];
             //check the file extension
@@ -37,12 +41,10 @@ router.post("/aws/media", checkAuth,async(req,res)=>{
 
             const email = req.user.email
             const mediaID = new mongoose.mongo.ObjectId();
-            const fileName = `bucketFolder/${email}/${mediaID}-media`;
+            console.log(mediaID)
+            const fileName = `mediaFolder/${email}/${mediaID}-media`;
             //upload on AWS S3
             const data = await uploadFile(buffer, fileName, type);
-            console.log("aws data: ", data)
-            console.log("media url", data.location)
-            console.log("file type,", type.ext)
             const mediaInfo = {
                 ownerName: req.user.name,
                 description: req.body.description,
@@ -50,13 +52,14 @@ router.post("/aws/media", checkAuth,async(req,res)=>{
                 location: req.body.location,
                 owner: req.user._id,
                 awsFilePathMediaID:mediaID,
-                url: data.location,
-                mediaType: type.ext
+                url: data.Location,
+                mediaType: `.${type.ext}`
             }
             await Media.create(mediaInfo)
             res.status(201).send()
         }
         catch(e){
+            console.log(e)
             return res.status(500);
         }
     });
