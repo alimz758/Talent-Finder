@@ -3,12 +3,15 @@ const Comments = require("../comment/comment.js").Comment
 const mediaSchema = mongoose.Schema({
     media: Buffer,
     ownerName: String,
+    awsURL:String, //to store in aws,
+    mediaType:String,
     owner : {
         type: mongoose.Schema.Types.ObjectId,
         required:true,
         ref:'UserPerformer'
     },
     subject: String,
+    awsFilePathMediaID:mongoose.Schema.Types.ObjectId,
     private: {type:Boolean,default:false},//only connection can see
     createdAt: { type: Date, default: new Date() },
     editedAt:{type:Date},
