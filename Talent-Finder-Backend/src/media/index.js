@@ -8,8 +8,9 @@ const controller = require("./controller.js");
 const checkAuth = require("../middleware/jwt_authenticator.js");
 const DOMAIN_NAME = process.env.DOMAIN_NAME
 const PORT = process.env.PORT
-const BUCKET_NAME= process.env.AWS_BUCKET_NAME
+const BUCKET_NAME= process.env.AWS_VIDEO_BUCKET_NAME
 const AWS_REGION= process.env.AWS_REGION
+const AWS_CLOUD_FRONT_DOMAIN_NAME= process.env.AWS_CLOUD_FRONT_DOMAIN_NAME
 const multiparty = require("multiparty");
 const fileType = require("file-type");
 const fs = require("fs");
@@ -17,10 +18,11 @@ const fs = require("fs");
 const uploadFile = require("../db/awsS3_controller.js").uploadFile;
 const deleteFile = require("../db/awsS3_controller.js").deleteFile;
 const getFile = require("../db/awsS3_controller.js").getFile;
+const uploadVideo = require("../db/awsS3_controller.js").uploadVideo;
 //post media for aws:
 router.post("/media", checkAuth,async(req,res)=>{
     const form = new multiparty.Form();
-    console.log(form)
+    //console.log(form)
     form.parse(req, async (error, fields, files) => {
         if (error) {
             console.log(error)
@@ -31,14 +33,15 @@ router.post("/media", checkAuth,async(req,res)=>{
             //console.log("file: ", files)
             const path = files.media[0].path;
             const buffer = fs.readFileSync(path);
-            const type = await fileType.fromBuffer(buffer);
-            const allowedFileType = ["jpg", "jpeg", "heic", "png","3GPP", "AVI", "FLV", "MOV", "MPEG4", "MPEGPS", "WebM", "WMV"];
+            const type = await fileType.fromBuffer(buffer);//TYPE: { ext: 'mp4', mime: 'video/mp4' }
+            const allowedFileType = ["jpg", "jpeg", "heic", "png","mp4","3GPP", "AVI", "FLV", "MOV", "MPEG4", "MPEGPS", "WebM", "WMV"];
             //check the file extension
             if (!type || !allowedFileType.includes(type.ext)) {
                 return res.status(400).send({
                     message: "ERROR: file type must be of: for Images: jpg, jpeg, heic, png. For Videos: 3GPP, AVI, FLV, MOV, MPEG4, MPEGPS, WebM, WMV"
                 });
             }
+            const videotype = ["3GPP", "AVI", "FLV", "MOV", "MPEG4", "MPEGPS", "WebM", "WMV","mp4"]
             const email = req.user.email
             const mediaID = new mongoose.mongo.ObjectId();
             const fileName = `${email}/${mediaID}-media`;
@@ -46,7 +49,18 @@ router.post("/media", checkAuth,async(req,res)=>{
             req.user.userFolderPathOnS3= userFolderPath
             await req.user.save()
             //upload on AWS S3
-            const data = await uploadFile(buffer, fileName, type);
+            var data;
+            if(videotype.includes(type.ext)){
+                data = await uploadVideo(buffer, fileName, type)
+                //creating a cloudFrontURL to store in the db
+                const substr="https://"+ BUCKET_NAME+".s3."+AWS_REGION+".amazonaws.com/"
+                const len = substr.length
+                var slicedURL= data.Location.slice(len)
+                var videoCloudFrontURL= AWS_CLOUD_FRONT_DOMAIN_NAME+slicedURL
+            }
+            else{
+                data = await uploadFile(buffer, fileName, type);
+            }
             const mediaInfo = {
                 ownerName: req.user.name,
                 description: req.body.description,
@@ -54,7 +68,7 @@ router.post("/media", checkAuth,async(req,res)=>{
                 location: req.body.location,
                 owner: req.user._id,
                 awsFilePathMediaID:mediaID,
-                url: data.Location,
+                url: videotype.includes(type.ext)? videoCloudFrontURL: data.Location,
                 mediaType: type.ext,
                 mediaBucketKey: data.key,
             }
@@ -62,7 +76,7 @@ router.post("/media", checkAuth,async(req,res)=>{
             res.status(201).send()
         }
         catch(e){
-
+            console.log(e)
             return res.status(500);
         }
     });

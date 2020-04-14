@@ -29,8 +29,6 @@ const checkS3Connection = async () => {
     //empty file in the bucket to check the connection
     Key: "s3-connection-tester"
   };
-  console.log(AWS_REGION)
-  console.log(video_bucket_params.Bucket)
   try {
     await s3.headObject(image_bucket_params).promise();
     console.log(
@@ -53,7 +51,24 @@ const checkS3Connection = async () => {
     );
   }
 };
-
+//upload video
+//Upload a user file
+const uploadVideo = (buffer, name, type) => {
+  const params = {
+    ACL: "public-read",
+    Body: buffer,
+    Bucket: S3_VIDEO_BUCKET,
+    ContentType: type.mime,
+    //Object key for which the multipart upload is to be initiated.
+    Key: `${name}.${type.ext}`,
+    //The server-side encryption algorithm used when storing this object in Amazon S3 (for example, AES256, aws:kms).
+    //ServerSideEncryption:"aws:kms"
+  };
+  return s3
+    .upload(params)
+    .promise()
+    .catch();
+};
 //Upload a user file
 const uploadFile = (buffer, name, type) => {
   const params = {
@@ -121,5 +136,6 @@ module.exports = {
   uploadFile,
   deleteFile,
   getFile,
-  deleteDirectory
+  deleteDirectory,
+  uploadVideo
 };
