@@ -4,8 +4,8 @@
   "description": "Web/mobile app based to find talents based on videos",
   "main": "app.js",
   "scripts": {
-    "start": "env-cmd -f ./config/dev.env node src/server.js",
-    "dev": "env-cmd -f ./config/dev.env nodemon src/server.js"
+    "start": "env-cmd -f ./.env node src/server.js",
+    "dev": "env-cmd -f ./.env nodemon src/server.js"
   },
   "repository": {
     "type": "git",

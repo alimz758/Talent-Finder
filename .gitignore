@@ -1,5 +1,4 @@
 Talent-Finder-Backend/node_modules
-Talent-Finder-Backend/config
-talent-finder-frontend/node_modules
+Talent-Finder-Backend/.env
 .DS_Store
 .vscode
