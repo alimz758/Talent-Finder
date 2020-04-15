@@ -26,6 +26,9 @@ const mediaSchema = mongoose.Schema({
     url: {type: String},//Public URL of the media
     description:String,
     mediaBucketKey:String,
+    optimizedVideoKey:String,
+    optimizedThumbKey:String,
+    thumbnailURL:String
 })
 //relation with Comment
 mediaSchema.virtual('comments',{
@@ -46,7 +49,8 @@ mediaSchema.methods.toJSON = function(){
     //delete fields to not send back to the client
     delete mediaObject.awsFilePathMediaID
     delete mediaObject.mediaBucketKey
-    delete mediaObject.url
+    delete mediaObject.optimizedVideoKey
+    delete mediaObject.optimizedThumbKey
     return mediaObject
 }
 const Media = mongoose.model("Media", mediaSchema);

@@ -32,7 +32,24 @@ const userPerformerSchema = mongoose.Schema({
             type: String,
             required: true
         }
-    }]
+    }],
+    followings: [
+        {
+            user:{ 
+                type: mongoose.Schema.Types.ObjectId, 
+                ref: 'UserPerformer' 
+            },
+        }
+
+    ],
+    followers: [
+        {
+            user:{ 
+                type: mongoose.Schema.Types.ObjectId, 
+                ref: 'UserPerformer' 
+            },
+        }
+    ],
 })
 //relation with Media
 userPerformerSchema.virtual('media',{
@@ -61,7 +78,6 @@ userPerformerSchema.methods.toJSON = function(){
     //delete fields to not send back to the client
     delete userObject.password
     delete userObject.tokens
-    delete userObject.profilePic
     delete userObject.userFolderPathOnS3
     return userObject
 }

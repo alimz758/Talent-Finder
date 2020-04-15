@@ -19,6 +19,7 @@ const uploadFile = require("../db/awsS3_controller.js").uploadFile;
 const deleteFile = require("../db/awsS3_controller.js").deleteFile;
 const getFile = require("../db/awsS3_controller.js").getFile;
 const uploadVideo = require("../db/awsS3_controller.js").uploadVideo;
+const deleteVideo = require("../db/awsS3_controller.js").deleteVideo;
 //post media for aws:
 router.post("/media", checkAuth,async(req,res)=>{
     const form = new multiparty.Form();
@@ -44,7 +45,7 @@ router.post("/media", checkAuth,async(req,res)=>{
             const videotype = ["3GPP", "AVI", "FLV", "MOV", "MPEG4", "MPEGPS", "WebM", "WMV","mp4"]
             const email = req.user.email
             const mediaID = new mongoose.mongo.ObjectId();
-            const fileName = `${email}/${mediaID}-media`;
+            const fileName = `${email}/${mediaID}`;
             const userFolderPath = `${email}/`
             req.user.userFolderPathOnS3= userFolderPath
             await req.user.save()
@@ -52,11 +53,15 @@ router.post("/media", checkAuth,async(req,res)=>{
             var data;
             if(videotype.includes(type.ext)){
                 data = await uploadVideo(buffer, fileName, type)
+                var tempStr=  controller.reverseString( controller.reverseString(data.Key).slice(4));
                 //creating a cloudFrontURL to store in the db
                 const substr="https://"+ BUCKET_NAME+".s3."+AWS_REGION+".amazonaws.com/"
                 const len = substr.length
                 var slicedURL= data.Location.slice(len)
-                var videoCloudFrontURL= AWS_CLOUD_FRONT_DOMAIN_NAME+slicedURL
+                var videoCloudFrontURL= AWS_CLOUD_FRONT_DOMAIN_NAME+"optmized-video/"+slicedURL
+                var optimizedVideoKey="optmized-video/"+data.Key
+                var optimizedThumbKey="optmized-video/"+ tempStr+"-00001.png"
+                var thumbnailURL= AWS_CLOUD_FRONT_DOMAIN_NAME+ "optmized-video/" + controller.reverseString( controller.reverseString(slicedURL).slice(4))+"-00001.png"
             }
             else{
                 data = await uploadFile(buffer, fileName, type);
@@ -71,9 +76,13 @@ router.post("/media", checkAuth,async(req,res)=>{
                 url: videotype.includes(type.ext)? videoCloudFrontURL: data.Location,
                 mediaType: type.ext,
                 mediaBucketKey: data.key,
+                optimizedVideoKey: optimizedVideoKey,
+                optimizedThumbKey:optimizedThumbKey,
+                thumbnailURL:videotype.includes(type.ext)? thumbnailURL: ""
+
             }
-            await Media.create(mediaInfo)
-            res.status(201).send()
+            const media = await Media.create(mediaInfo)
+            res.status(201).send({media})
         }
         catch(e){
             console.log(e)

@@ -257,4 +257,19 @@ router.get("/users/:id/media",checkAuth, async(req,res)=>{
         res.status(500).send({error:e})
     }
 })
+//following a user
+router.post("/users/:id/follow",checkAuth, async(req,res)=>{
+    //first check not following yourself
+    if(req.params.id===req.user.id){
+        return res.status(400).send({error: "You cannot follow yourself"})
+    }
+    //check if not already in the follewer
+    //TODO
+    try{
+
+    }
+    catch(e){
+        
+    }
+})
  module.exports= router;

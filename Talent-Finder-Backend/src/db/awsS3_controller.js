@@ -6,6 +6,7 @@ const bluebird = require("bluebird");
 const S3_IMAGE_BUCKET = process.env.AWS_IMAGE_BUCKET_NAME;
 const S3_VIDEO_BUCKET = process.env.AWS_VIDEO_BUCKET_NAME;
 const AWS_ACCESS_KEY_ID = process.env.AWS_ACCESS_KEY_ID;
+const S3_OPTIMIZED_BUCKET= process.env.AWS_OPTIMIZED_BUCKET_NAME
 const AWS_SECRET_ACCESS_KEY = process.env.AWS_SECRET_ACCESS_KEY;
 const AWS_REGION =process.env.AWS_REGION
 const AWS = require("aws-sdk");
@@ -29,6 +30,11 @@ const checkS3Connection = async () => {
     //empty file in the bucket to check the connection
     Key: "s3-connection-tester"
   };
+  const optimized_video_bucket_params = {
+    Bucket: S3_OPTIMIZED_BUCKET,
+    //empty file in the bucket to check the connection
+    Key: "s3-connection-tester"
+  };
   try {
     await s3.headObject(image_bucket_params).promise();
     console.log(
@@ -42,6 +48,13 @@ const checkS3Connection = async () => {
       chalk.green("[INIT]: ") +
         "S3 bucket connection to " +
         chalk.yellow(S3_VIDEO_BUCKET) +
+        " successful"
+    );
+    await s3.headObject(optimized_video_bucket_params).promise();
+    console.log(
+      chalk.green("[INIT]: ") +
+        "S3 bucket connection to " +
+        chalk.yellow(S3_OPTIMIZED_BUCKET) +
         " successful"
     );
   } catch (err) {
@@ -79,10 +92,21 @@ const uploadFile = (buffer, name, type) => {
     //Object key for which the multipart upload is to be initiated.
     Key: `${name}.${type.ext}`,
     //The server-side encryption algorithm used when storing this object in Amazon S3 (for example, AES256, aws:kms).
-    ServerSideEncryption:"aws:kms"
+    //ServerSideEncryption:"aws:kms"
   };
   return s3
     .upload(params)
+    .promise()
+    .catch();
+};
+//delete a file by  passing (filename, and extention)
+const deleteVideo = (key) => {
+  const params = {
+    Bucket: S3_VIDEO_BUCKET,
+    Key: key
+  };
+  return s3
+    .deleteObject(params)
     .promise()
     .catch();
 };
@@ -137,5 +161,6 @@ module.exports = {
   deleteFile,
   getFile,
   deleteDirectory,
-  uploadVideo
+  uploadVideo,
+  deleteVideo
 };
