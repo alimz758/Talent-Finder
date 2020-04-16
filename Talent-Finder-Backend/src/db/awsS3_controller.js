@@ -10,84 +10,40 @@ const S3_OPTIMIZED_BUCKET= process.env.AWS_OPTIMIZED_BUCKET_NAME
 const AWS_SECRET_ACCESS_KEY = process.env.AWS_SECRET_ACCESS_KEY;
 const AWS_REGION =process.env.AWS_REGION
 const AWS = require("aws-sdk");
-
 AWS.config.update({
   accessKeyId: AWS_ACCESS_KEY_ID,
   secretAccessKey: AWS_SECRET_ACCESS_KEY
 });
 AWS.config.setPromisesDependency(bluebird);
 const s3 = new AWS.S3();
-
+const check_key= "s3-connection-tester"
+const bucket_array=[S3_IMAGE_BUCKET,
+            S3_VIDEO_BUCKET,
+            S3_OPTIMIZED_BUCKET]
 //Test S3 connection
 const checkS3Connection = async () => {
-  const image_bucket_params = {
-    Bucket: S3_IMAGE_BUCKET,
-    //empty file in the bucket to check the connection
-    Key: "s3-connection-tester"
-  };
-  const video_bucket_params = {
-    Bucket: S3_VIDEO_BUCKET,
-    //empty file in the bucket to check the connection
-    Key: "s3-connection-tester"
-  };
-  const optimized_video_bucket_params = {
-    Bucket: S3_OPTIMIZED_BUCKET,
-    //empty file in the bucket to check the connection
-    Key: "s3-connection-tester"
-  };
   try {
-    await s3.headObject(image_bucket_params).promise();
-    console.log(
-      chalk.green("[INIT]: ") +
-        "S3 bucket connection to " +
-        chalk.yellow(S3_IMAGE_BUCKET) +
-        " successful"
-    );
-    await s3.headObject(video_bucket_params).promise();
-    console.log(
-      chalk.green("[INIT]: ") +
-        "S3 bucket connection to " +
-        chalk.yellow(S3_VIDEO_BUCKET) +
-        " successful"
-    );
-    await s3.headObject(optimized_video_bucket_params).promise();
-    console.log(
-      chalk.green("[INIT]: ") +
-        "S3 bucket connection to " +
-        chalk.yellow(S3_OPTIMIZED_BUCKET) +
-        " successful"
-    );
+    bucket_array.forEach(async bucket=>{
+      await s3.headObject({Bucket:bucket,Key:check_key }).promise();
+      console.log(
+        chalk.green("[INIT]: ") +
+          "S3 bucket connection to " +
+          chalk.yellow(bucket) +
+          " successful"
+      );
+    })
   } catch (err) {
-      console.log(err)
       console.log(
       chalk.red("ERROR: Staging S3 bucket connection failure; check .env file")
     );
   }
 };
-//upload video
 //Upload a user file
-const uploadVideo = (buffer, name, type) => {
+const uploadFile = (bucket,buffer, name, type) => {
   const params = {
     ACL: "public-read",
     Body: buffer,
-    Bucket: S3_VIDEO_BUCKET,
-    ContentType: type.mime,
-    //Object key for which the multipart upload is to be initiated.
-    Key: `${name}.${type.ext}`,
-    //The server-side encryption algorithm used when storing this object in Amazon S3 (for example, AES256, aws:kms).
-    //ServerSideEncryption:"aws:kms"
-  };
-  return s3
-    .upload(params)
-    .promise()
-    .catch();
-};
-//Upload a user file
-const uploadFile = (buffer, name, type) => {
-  const params = {
-    ACL: "public-read",
-    Body: buffer,
-    Bucket: S3_IMAGE_BUCKET,
+    Bucket: bucket,
     ContentType: type.mime,
     //Object key for which the multipart upload is to be initiated.
     Key: `${name}.${type.ext}`,
@@ -100,20 +56,9 @@ const uploadFile = (buffer, name, type) => {
     .catch();
 };
 //delete a file by  passing (filename, and extention)
-const deleteVideo = (key) => {
+const deleteFile = (bucket,key) => {
   const params = {
-    Bucket: S3_VIDEO_BUCKET,
-    Key: key
-  };
-  return s3
-    .deleteObject(params)
-    .promise()
-    .catch();
-};
-//delete a file by  passing (filename, and extention)
-const deleteFile = (key) => {
-  const params = {
-    Bucket: S3_IMAGE_BUCKET,
+    Bucket: bucket,
     Key: key
   };
   return s3
@@ -161,6 +106,4 @@ module.exports = {
   deleteFile,
   getFile,
   deleteDirectory,
-  uploadVideo,
-  deleteVideo
 };
