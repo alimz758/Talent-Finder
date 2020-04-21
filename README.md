@@ -4,6 +4,4 @@ This is a backend code for video-based social media where users can create a por
 
 by filling thier information and uploading videos. For video storage and performance I have used AWS Services where you can
 
-see more in details below.
-
-For more details please check the `Talent-finder-backend` directory
+see more in details in `Talent-finder-backend` directory
