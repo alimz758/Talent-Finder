@@ -6,4 +6,4 @@ by filling thier information and uploading videos. For video storage and perform
 
 see more in details below.
 
-For more details please check the `Talent-finder-backedn` directory
+For more details please check the `Talent-finder-backend` directory
