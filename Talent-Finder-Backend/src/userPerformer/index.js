@@ -139,7 +139,7 @@ router.get("/users/verify", checkEmailAuth, (req,res)=>{
 })
 //////PROFILE PICTURE
 //Create & update profile pic
-router.post("/users/me/profile-pic", checkAuth,db.profilePicUpload.single('profile-pic'),async(req,res)=>{
+router.post("/users/profile-pic", checkAuth,db.profilePicUpload.single('profile-pic'),async(req,res)=>{
     //get access to the binary file of the image and store in db
     //format the image to 
     const buffer = await sharp(req.file.buffer).png().toBuffer()
@@ -152,7 +152,7 @@ router.post("/users/me/profile-pic", checkAuth,db.profilePicUpload.single('profi
 (error,req,res,next)=>{
     res.status(400).send({error: error.message})
 })
-router.get("/users/me/profile-pic", checkAuth, async(req,res)=>{
+router.get("/users/profile-pic", checkAuth, async(req,res)=>{
     try{
         const user= req.user
         if(!user.profilePic){
@@ -167,7 +167,7 @@ router.get("/users/me/profile-pic", checkAuth, async(req,res)=>{
     }
 })
 //delete profile pic
-router.delete("/users/me/profile-pic", checkAuth, async(req,res)=>{
+router.delete("/users/profile-pic", checkAuth, async(req,res)=>{
     try{
         req.user.profilePic= undefined
         await req.user.save()
@@ -179,7 +179,7 @@ router.delete("/users/me/profile-pic", checkAuth, async(req,res)=>{
 })
 //END OF PROFILE PIC
 //Create and/or update the resume
-router.post("/users/me/resume", checkAuth,db.resumeUpload.single('resume'),async(req,res)=>{
+router.post("/users/resume", checkAuth,db.resumeUpload.single('resume'),async(req,res)=>{
     //get access to the binary file of the PDF file and store in db
     req.user.resume=req.file.buffer
     await req.user.save()
@@ -191,7 +191,7 @@ router.post("/users/me/resume", checkAuth,db.resumeUpload.single('resume'),async
     res.status(400).send({error: error.message})
 })
 //get the resume
-router.get("/users/me/resume", checkAuth, async(req,res)=>{
+router.get("/users/resume", checkAuth, async(req,res)=>{
     try{
         const user= req.user
         if(!user.resume){
@@ -206,7 +206,7 @@ router.get("/users/me/resume", checkAuth, async(req,res)=>{
     }
 })
 //delete resume
-router.delete("/users/me/resume", checkAuth, async(req,res)=>{
+router.delete("/users/resume", checkAuth, async(req,res)=>{
     try{
         req.user.resume= undefined
         await req.user.save()

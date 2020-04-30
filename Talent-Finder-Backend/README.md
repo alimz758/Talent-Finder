@@ -17,7 +17,8 @@ For additional guidence/help, email me at ali.mz758@gmail.com
 # Setup
 
 1. [Local Environment Setup](#local-environment-setup)
-2. [Directory Structure](#directory-structure)
+3. [Additional Tools](#additional-tools)
+4. [Directory Structure](#directory-structure)
 
 ---
 
@@ -46,17 +47,6 @@ For additional guidence/help, email me at ali.mz758@gmail.com
 
 ---
 
-## NPM Scripts
-
-1. Starting the NodeJS app
-
-   > npm start
-
-   Starts up the server by running `node src/server.js` with environment variables defined in .env.
-
-
----
-
 ## Additional Tools
 
 1. Download and install Postman to test backend REST APIs
@@ -64,3 +54,140 @@ For additional guidence/help, email me at ali.mz758@gmail.com
 
 ---
 
+## Directory Structure
+
+├── README.md
+├── aws
+│   └── aws_lambda_transcoder.js
+├── package-lock.json
+├── package.json
+└── src
+    ├── agency
+    │   ├── agency.js
+    │   └── index.js
+    ├── app.js
+    ├── comment
+    │   ├── comment.js
+    │   └── index.js
+    ├── db
+    │   ├── awsS3_controller.js
+    │   └── mongoose.js
+    ├── media
+    │   ├── controller.js
+    │   ├── index.js
+    │   └── media.js
+    ├── middleware
+    │   ├── jwt_authenticator.js
+    │   └── jwt_email_auth.js
+    ├── server.js
+    ├── userAgent
+    │   ├── index.js
+    │   └── userAgent.js
+    └── userPerformer
+        ├── controller.js
+        ├── index.js
+        └── userPerformer.js
+
+---
+
+## Using Postman
+
+**Creating a Postman Request**
+
+All the requests under the workspace collection inherits a authToken variable automatically;
+
+When creating each requests:
+
+- If authToken is required, go to the Authorization tab of the request, and select "inherit auth from parent" under the TYPE tab; no further authToken has to be passed through Headers
+
+- You could send requests like an example below
+
+```
+{
+    "name":"Ali Mirabzdeh",
+    "email":"ali-mz@g.ucla.edu",
+    "password":"password"
+}
+```
+
+---
+
+
+## Documentation
+
+## Auth Tokens
+
+For all API requests after login, the bearer token must be included in headers for authorization/ username extraction.
+
+| Key           | Value               |
+| ------------- | ------------------- |
+| Authorization | Bearer [Auth token] |
+
+There must be a white space between the string "Bearer" and the token string
+
+You could do so in Postman.
+
+---
+
+
+## Models & API Endpoints Documentation
+
+Models:
+
+1. [UserPerformer](#user-performer-model)
+2. [Media](#media-model)
+3. [Comments](#comments-model)
+4. Other models are under dev
+
+---
+
+### UserPerfomer Model
+
+### Schema
+
+| column         | type    | required | properties                                                   |
+| -------------- | ------- | -------- | ------------------------------------------------------------ |
+| name           | String  | Yes      |                                                              |
+| email          | String  | Yes      |                                                              |
+| password       | String  | Yes      |                                                              |
+| age            | Number  |          |                                                              |
+| profilePic     | Buffer  |          |                                                              |
+| resume         | Buffer  |          |                                                              |
+| createdAt      | Date    |          |                                                              |
+| bio            | String  |          |                                                              |
+| gender         | String  |          |                                                              |
+| location       | String  |          |                                                              |
+| verified       | Boolean |          |                                                              |
+| private        | Boolean |          |                                                              |
+| education      | String  |          |                                                              |
+| tokens         | Array   |          |                                                              |
+| followings     | Array   |          |                                                              |
+| followers     | Array    |          |                                                              |
+| userFolderPathOnS3  | String   |          |                                                              |
+
+### API Endpoints
+
+| url                          | HTTP Method | description                                                        |
+| ---------------------------- | ----------- | ------------------------------------------------------------------ |
+| /users/login                 | POST        | [User Login](#user-login)                                          |
+| /users/signup                | POST        | [User Signup](#user-signup)                                        |
+| /users/my-info               | POST        | [User Info](#user-info)                                            |
+| /users/logout                | POST        | [User Logout](#user-logout)                                        |
+| /users/logoutAll             | POST        | [User Logout All](#user-logout-all)                                |
+| /users/profile-pic           | POST        | [User Profile Picture](#user-profile-pic)                          |
+| /users/:id/follow            | POST        | [User Follow](#user-follow)                                        |
+| /users/resume                | POST        | [User Resume](#user-resume)                                        |
+| /users/my-info               | GET         | [User Info-Get](#user-info-get)                                    |
+| /users/verify                | GET         | [User verify](#user-verify)                                        |
+| /users/my-info               | GET         | [User Info-Get](#user-info-get)                                    |
+| /users/profile-pic           | GET         | [User Profile Picture- GET](#user-profile-pic-get)                 |
+| /users/resume                | GET         | [User Resume -GET](#user-resume-get)                               |
+| /users/:id                   | GET         | [User ID](#user-ID)                                                |
+| /users/:id/media             | GET         | [User Meida](#user-media)                                          |
+| /users/profile-pic           | DELETE      | [User Profile Pic Delete](#user-profile-pic-del)                   |
+| /users/resume                | DELETE      | [User Resume Delete](#user-resume-del)                             |
+| /users/me                    | DELETE      | [User Delete Me](#user-delete-me)                                  |
+
+
+
+---

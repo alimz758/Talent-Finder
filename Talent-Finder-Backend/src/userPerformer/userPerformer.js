@@ -23,7 +23,6 @@ const userPerformerSchema = mongoose.Schema({
     profilePic: { type: Buffer},
     verified: { type: Boolean, default: false },
     private: { type: Boolean, default: false },
-    activityStatus: { type: Boolean, default: false },
     createdAt: { type: Date, default: new Date() },
     education: {type: String},
     role: {type: String},
