@@ -17,6 +17,7 @@ For additional guidence/help, email me at ali.mz758@gmail.com
 # Setup
 
 1. [Local Environment Setup](#local-environment-setup)
+2. [.env Setup](#env-setup)
 3. [Additional Tools](#additional-tools)
 4. [Directory Structure](#directory-structure)
 
@@ -44,6 +45,31 @@ For additional guidence/help, email me at ali.mz758@gmail.com
 1. Open a terminal, and run the command `mongod` to start the mongodb daemon - may have to run `sudo mongod` for permission purposes
 2. Open another terminal and run `npm run dev` in the home directory; this starts the backend application with nodemon
 3. The local backend development port is set to 8000, now use Postman to test API endpoints. Look at [Using Postman](#using-postman) for instructions.
+
+---
+## .env Setup
+
+Create a .env file in the root directory with the following variables
+
+MAKE SURE YOU ADD THIS FILE TO .gitignore
+
+```
+MODE= THE MODE YOU ARE WORKING, i.e DEV, PRODCUTION
+PORT= PORT NUMBER, i.e 8000
+SENDGRID_API_KEY= YOUR API KEY FOR SENDGRID
+MONGODB_URL=mongodb://127.0.0.1:27017/YOUR-DB-NAME
+JWT_SECRET_KEY= JWT KEY
+JWT_EMAIL_KEY=JWT FOR EMAIL
+DOMAIN_NAME= i.e localhost:
+AWS_IMAGE_BUCKET_NAME= AWS S3 BUCKET NAME FOR IMAGES
+AWS_VIDEO_BUCKET_NAME=AWS S3 BUCKET NAME FOR UNOPTIMEZED VIDEOS
+AWS_OPTIMIZED_BUCKET_NAME= AWS S3 BUCKET NAME FOR OPTIMIZED VIDEOS
+AWS_ACCESS_KEY_ID= AWS KEY ID 
+AWS_SECRET_ACCESS_KEY = AWS ACCESS KEY
+AWS_REGION= AWS REGION
+AWS_CLOUD_FRONT_DOMAIN_NAME= AWS CLOUDFRONT URL
+
+```
 
 ---
 
@@ -143,7 +169,7 @@ Models:
 
 ---
 
-## User Performer Model
+### User Performer Model
 
 ### Schema
 
