@@ -136,14 +136,14 @@ You could do so in Postman.
 
 Models:
 
-1. [UserPerformer Model](#user-performer-model)
+1. [User Performer Model](#user-performer-model)
 2. [Media](#media-model)
 3. [Comments](#comments-model)
 4. Other models are under dev
 
 ---
 
-### UserPerfomer Model
+### User Perfomer Model
 
 ### Schema
 
