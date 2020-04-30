@@ -13,14 +13,11 @@ For additional guidence/help, email me at ali.mz758@gmail.com
 1. [Setup](#setup)
 2. [Dev-Rules](#dev-rules)
 3. [Documentation](#documentation)
-4. [Deployment](#deployment)
 
 # Setup
 
 1. [Local Environment Setup](#local-environment-setup)
-2. [NPm Scripts](#npm-scripts)
-3. [Additional Tools](#additional-tools)
-4. [Directory Structure](#directory-structure)
+2. [Directory Structure](#directory-structure)
 
 ---
 
