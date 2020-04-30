@@ -56,6 +56,7 @@ For additional guidence/help, email me at ali.mz758@gmail.com
 
 ## Directory Structure
 
+```
 ├── README.md
 ├── aws
 │   └── aws_lambda_transcoder.js
@@ -87,6 +88,7 @@ For additional guidence/help, email me at ali.mz758@gmail.com
         ├── controller.js
         ├── index.js
         └── userPerformer.js
+```
 
 ---
 
@@ -134,7 +136,7 @@ You could do so in Postman.
 
 Models:
 
-1. [UserPerformer](#user-performer-model)
+1. [UserPerformer Model](#user-performer-model)
 2. [Media](#media-model)
 3. [Comments](#comments-model)
 4. Other models are under dev
@@ -145,7 +147,7 @@ Models:
 
 ### Schema
 
-| column         | type    | required | properties                                                   |
+| Field          | Type    | Required | Properties                                                   |
 | -------------- | ------- | -------- | ------------------------------------------------------------ |
 | name           | String  | Yes      |                                                              |
 | email          | String  | Yes      |                                                              |
@@ -187,7 +189,5 @@ Models:
 | /users/profile-pic           | DELETE      | [User Profile Pic Delete](#user-profile-pic-del)                   |
 | /users/resume                | DELETE      | [User Resume Delete](#user-resume-del)                             |
 | /users/me                    | DELETE      | [User Delete Me](#user-delete-me)                                  |
-
-
 
 ---
