@@ -143,7 +143,7 @@ Models:
 
 ---
 
-### User Perfomer Model
+## User Perfomer Model
 
 ### Schema
 
