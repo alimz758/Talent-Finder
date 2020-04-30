@@ -7,7 +7,7 @@ by filling thier information and uploading videos. For video storage and perform
 see more in details below.
 
 
-This is the backend code repository for PoolUp: made with NodeJS, Express, and MongoDB w/ Mongoose.
+This is the backend code repository for Act-Finder: made with NodeJS, Express, and MongoDB w/ Mongoose.
 For additional guidence/help, email me at ali.mz758@gmail.com
 
 1. [Setup](#setup)
