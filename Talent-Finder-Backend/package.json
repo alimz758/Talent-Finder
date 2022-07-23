@@ -28,7 +28,7 @@
     "env-cmd": "^10.1.0",
     "express": "^4.17.1",
     "express-session": "^1.17.0",
-    "file-type": "^14.1.4",
+    "file-type": "^16.5.4",
     "fs": "0.0.1-security",
     "isemail": "^3.2.0",
     "jsonwebtoken": "^8.5.1",
